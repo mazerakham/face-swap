@@ -1,0 +1,49 @@
+import asyncio
+from .client import FaceSwapClient
+from .models import BoundaryAdjustments, FaceTask, ProcessImageRequest
+
+
+# Example URLs - replace these with your own images
+SOURCE_IMAGE_URL = "https://example.com/source-face.jpg"
+TARGET_IMAGE_URL = "https://example.com/target-image.jpg"
+
+
+async def main() -> None:
+    client = FaceSwapClient()
+    
+    # Create face swap request
+    request = ProcessImageRequest(
+        target_url=TARGET_IMAGE_URL,
+        face_tasks=[
+            FaceTask(
+                source_url=SOURCE_IMAGE_URL,
+                source_landmarks=[0],  # Use first detected face
+                target_landmarks=[0],  # Replace first detected face
+                boundary_adjustments=BoundaryAdjustments()
+            )
+        ]
+    )
+    
+    # Submit face swap request
+    response = await client.process_image(request)
+    print(f"Request submitted. Image ID: {response.id}")
+    
+    # Poll for results
+    while True:
+        result = await client.get_result(response.id)
+        if result.status == 2 and result.processed:  # Ready
+            print(f"Face swap complete! Result URL: {result.processed.url}")
+            break
+        elif result.status == 2:  # Ready but no result
+            print("Face swap failed: No processed result available")
+            break
+        elif result.status == 0:  # Queue
+            print("Processing... waiting 2 seconds")
+            await asyncio.sleep(2)
+        else:
+            print(f"Unexpected status: {result.status_name}")
+            break
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

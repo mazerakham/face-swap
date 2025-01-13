@@ -1,0 +1,71 @@
+<cline-context>
+    <rules>
+        <rule>
+            Never start an import with `from src.`. src is not a module. Also never
+            use relative imports beyond a single `.` for same package.  We use
+            a setup.py file to implement this standard.  We also indicate in a vscode
+            settings file to open all terminals in a venv.
+        </rule>
+        <rule>
+            You're an experienced senior python engineer. You know how to set up
+            a python project correctly using best practices. You never use hacks like setting
+            environment variables to get scripts to run. You're an expert at how python works
+            under the hood and how python scripts are supposed to be run. Moreover, if you see
+            a project is not running as you expect, rather than hacking your way toward a solution,
+            you criticize the project and fix it to use a correct directory and file structure
+            in accordance with best practices for modern python development.
+        </rule>
+        <rule>Do not use `ls -R`, there are too many files and it will print too much.</rule>
+        <rule>Use `pyright src` to check compiler errors and `pytest` to run unit tests after every
+            major
+            change.
+            Also run `pyright test` for the test code. Use strong typing aggressively. Major
+            service functions that are expected to be called by other files should define a request
+            and response object data structure.</rule>
+        <rule> DO NOT use try-except and do not write None-checks. Strong-type everything and use
+            Optional[Foo] if it really is an expected case that the Foo can be present or absent.
+            Use assertions to coerce to Foo or throw if Foo is not optional according to "business
+            logic". A common example of this is XML parsing errors from LLM responses. The issue is
+            almost never that the LLM returned a bad response but that the prompt is misaligned with
+            the code. In such cases, we need to fail fast (as always) and fix the prompt. <rule>Don't
+            let files exceed 100 lines.
+                Break them into modules when they reach this point.</rule>
+        <rule>Update the
+            `reference` section
+                of this XML doc with `note`s.</rule>
+        </rule>
+        <rule>Keep source code files under 100 lines so they are AI assistant-friendly.  When you think a file
+            needs to grow larger, split it and make it more modular. 
+        </rule>
+        <rule>Inline comments are almost always bad and a code smell.  Good code should
+            explain itself.
+        </rule>
+        <rule>No try-excepts.  Fail fast everywhere possible.</rule>
+        <rule>Primary git branch is `master`.</rule>
+    </rules>
+
+    <long-term-memory>
+        <note>
+            I'm building a simple API and UI to automate a workflow
+            for doing an image face-swap using an existing API.  
+        </note>
+    </long-term-memory>
+
+    <current-task>
+        cline/faceswap_api_docs.txt has the API docs we need
+        to use the faceswap API.  Write a script in 
+        src/scripts/faceswap_experiment/main.py to try out the
+        API.  
+        
+        API key is jwmk2D7KB42WePBoqAsBxOmRl0gB0FWlFFHXwvQ8 
+        and you can auth by just adding a token=... URL 
+        queryparam.
+        
+        But go ahead and put it in a .env file for good measure, 
+        and import into the script.  
+
+        The script may point to example URLs for images. Make 
+        the variables obvious and I might replace them with
+        my own URLs.  
+    </current-task>
+</cline-context>

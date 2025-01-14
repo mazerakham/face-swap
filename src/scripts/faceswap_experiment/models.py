@@ -41,4 +41,5 @@ class ProcessImageResponse:
     id: str
     processed: Optional[ProcessedImage]
     status: int
-    status_name: str
+    statusName: str
+    error: Optional[str] = None

@@ -4,8 +4,8 @@ from .models import BoundaryAdjustments, FaceTask, ProcessImageRequest
 
 
 # Example URLs - replace these with your own images
-SOURCE_IMAGE_URL = "https://example.com/source-face.jpg"
-TARGET_IMAGE_URL = "https://example.com/target-image.jpg"
+SOURCE_IMAGE_URL = "https://jake-public-01.s3.us-east-1.amazonaws.com/base_image.png"
+TARGET_IMAGE_URL = "https://jake-public-01.s3.us-east-1.amazonaws.com/headshot.png"
 
 
 async def main() -> None:
@@ -37,11 +37,12 @@ async def main() -> None:
         elif result.status == 2:  # Ready but no result
             print("Face swap failed: No processed result available")
             break
-        elif result.status == 0:  # Queue
+        elif result.status == 0 or result.statusName == "processing":  # Queue or Processing
             print("Processing... waiting 2 seconds")
             await asyncio.sleep(2)
         else:
-            print(f"Unexpected status: {result.status_name}")
+            error_msg = f": {result.error}" if result.error else ""
+            print(f"Face swap failed - {result.statusName}{error_msg}")
             break
 
 

@@ -4,8 +4,8 @@ from .models import BoundaryAdjustments, FaceTask, ProcessImageRequest
 
 
 # Example URLs - replace these with your own images
-SOURCE_IMAGE_URL = "https://jake-public-01.s3.us-east-1.amazonaws.com/base_image.png"
-TARGET_IMAGE_URL = "https://jake-public-01.s3.us-east-1.amazonaws.com/headshot.png"
+TARGET_IMAGE_URL = "https://jake-public-01.s3.us-east-1.amazonaws.com/target_image_small.png"
+SOURCE_IMAGE_URL = "https://jake-public-01.s3.us-east-1.amazonaws.com/base_image_small_2.png"
 
 
 async def main() -> None:

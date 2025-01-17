@@ -52,20 +52,18 @@
     </long-term-memory>
 
     <current-task>
-        cline/faceswap_api_docs.txt has the API docs we need
-        to use the faceswap API.  Write a script in 
-        src/scripts/faceswap_experiment/main.py to try out the
-        API.  
-        
-        API key is jwmk2D7KB42WePBoqAsBxOmRl0gB0FWlFFHXwvQ8 
-        and you can auth by just adding a token=... URL 
-        queryparam.
-        
-        But go ahead and put it in a .env file for good measure, 
-        and import into the script.  
+        src/scripts/faceswap_experiment now has a "successful experiment"
+        in that the Faceswap API client is now working in the sense that
+        it can send a successful request to the faceswap API to swap faces
+        on two images given by their public URLs.  
 
-        The script may point to example URLs for images. Make 
-        the variables obvious and I might replace them with
-        my own URLs.  
+        Write a simplest-possible frontend that exhibits this, allowing the
+        user to upload two photos, a "source face" and a "target image" into
+        which the face will be transplanted.  
+
+        It is likely that I'll need to give you access to my public S3 bucket
+        because public image URLs need to be sent to the API.  Assume any
+        API keys and AWS necessities are in .env and I will put them in
+        for you. 
     </current-task>
 </cline-context>

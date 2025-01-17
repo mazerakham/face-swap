@@ -28,6 +28,10 @@ class FaceSwapClient:
             )
             response.raise_for_status()
             data = response.json()
+            print(f"Process Image Response: {data}")  # Debug print
+            if data.get('processed'):
+                from .models import ProcessedImage
+                data['processed'] = ProcessedImage(**data['processed'])
             return ProcessImageResponse(**data)
 
     async def get_result(self, image_id: str) -> ProcessImageResponse:
@@ -38,4 +42,8 @@ class FaceSwapClient:
             )
             response.raise_for_status()
             data = response.json()
+            print(f"Get Result Response: {data}")  # Debug print
+            if data.get('processed'):
+                from .models import ProcessedImage
+                data['processed'] = ProcessedImage(**data['processed'])
             return ProcessImageResponse(**data)

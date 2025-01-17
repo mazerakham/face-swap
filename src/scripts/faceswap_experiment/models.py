@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional
 
 
@@ -17,9 +17,19 @@ class BoundaryAdjustments:
 @dataclass
 class FaceTask:
     source_url: str
-    source_landmarks: List[int]
-    target_landmarks: List[int]
-    boundary_adjustments: BoundaryAdjustments
+    boundary_adjustments: BoundaryAdjustments = field(default_factory=BoundaryAdjustments)
+    source_landmarks: List[float] = field(default_factory=lambda: [
+        392.36614990234375, 373.7126159667969, 548.9041748046875,
+        370.4452209472656, 479.63702392578125, 481.96380615234375,
+        406.66619873046875, 554.4490356445312, 539.323974609375,
+        551.4761352539062
+    ])
+    target_landmarks: List[float] = field(default_factory=lambda: [
+        529.2066650390625, 131.077392578125, 560.5444946289062,
+        135.17361450195312, 551.2858276367188, 141.26443481445312,
+        533.3395385742188, 160.43634033203125, 559.767578125,
+        163.57125854492188
+    ])
 
 
 @dataclass
@@ -41,4 +51,5 @@ class ProcessImageResponse:
     id: str
     processed: Optional[ProcessedImage]
     status: int
-    status_name: str
+    statusName: str
+    error: Optional[str] = None

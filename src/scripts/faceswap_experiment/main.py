@@ -17,8 +17,6 @@ async def main() -> None:
         face_tasks=[
             FaceTask(
                 source_url=SOURCE_IMAGE_URL,
-                source_landmarks=[0],  # Use first detected face
-                target_landmarks=[0],  # Replace first detected face
                 boundary_adjustments=BoundaryAdjustments()
             )
         ]

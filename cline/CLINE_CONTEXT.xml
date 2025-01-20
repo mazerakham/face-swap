@@ -52,6 +52,19 @@
     </long-term-memory>
 
     <current-task>
+      python3 -m face_swap.app
+
+      is not working.  We get:
+
+      ...
+      NameError: Fields must not use names with leading underscores; e.g., use 'cli_parse_args' instead of '_cli_parse_args'.
+
+      We've been trying for a while to debug this issue and nothing is working.
+
+      Rewrite the API from scratch.  Write it bit by bit, making sure it
+      compiles and runs at each stage until we isolate and fix the issue.
+    </current-task>
+    <next-task>
         src/scripts/faceswap_experiment now has a "successful experiment"
         in that the Faceswap API client is now working in the sense that
         it can send a successful request to the faceswap API to swap faces
@@ -65,5 +78,5 @@
         because public image URLs need to be sent to the API.  Assume any
         API keys and AWS necessities are in .env and I will put them in
         for you. 
-    </current-task>
+    </next-task>
 </cline-context>

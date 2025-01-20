@@ -1,6 +1,8 @@
 """API route handlers."""
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
+import boto3
+from botocore.config import Config
 from .icons8.client import Icons8Client
 from .icons8.models import FaceSwapRequest, FaceSwapResponse, ImageId
 from .config import Settings
@@ -14,13 +16,43 @@ def get_icons8_client(settings: Settings = Depends()) -> Icons8Client:
         base_url=settings.icons8_base_url
     )
 
+def get_s3_client(settings: Settings = Depends()):
+    """Dependency for S3 client instance."""
+    return boto3.client(
+        's3',
+        aws_access_key_id=settings.aws_access_key_id,
+        aws_secret_access_key=settings.aws_secret_access_key,
+        config=Config(region_name=settings.aws_region)
+    )
+
+@router.post("/upload")
+async def upload_image(
+    file: UploadFile = File(...),
+    s3_client = Depends(get_s3_client),
+    settings: Settings = Depends()
+) -> dict[str, str]:
+    """Upload an image to S3 and return its public URL."""
+    content = await file.read()
+    key = f"uploads/{file.filename}"
+    
+    s3_client.put_object(
+        Bucket=settings.s3_bucket,
+        Key=key,
+        Body=content,
+        ContentType=file.content_type
+    )
+    
+    url = f"https://{settings.s3_bucket}.s3.{settings.aws_region}.amazonaws.com/{key}"
+    return {"url": url}
+
 @router.post("/swap", response_model=FaceSwapResponse)
 async def swap_faces(
-    request: FaceSwapRequest,
+    source_url: str,
+    target_url: str,
     client: Icons8Client = Depends(get_icons8_client)
 ) -> FaceSwapResponse:
     """Submit a face swap request."""
-    return await client.swap_faces(request)
+    return await client.swap_faces(source_url=source_url, target_url=target_url)
 
 @router.get("/status/{job_id}", response_model=FaceSwapResponse)
 async def get_swap_status(

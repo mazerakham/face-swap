@@ -1,23 +1,22 @@
 """FastAPI application factory."""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import router
+from .config import Settings
+from .minimal_routes import router
 
-def create_app() -> FastAPI:
-    """Create and configure the FastAPI application."""
-    app = FastAPI(title="Face Swap API")
-    
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-    
-    app.include_router(router, prefix="/api/v1")
-    
-    return app
+def get_settings() -> Settings:
+    """Dependency for application settings."""
+    return Settings()
 
-app = create_app()
+app = FastAPI(title="Face Swap API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(router, prefix="/api/v1", dependencies=[Depends(get_settings)])

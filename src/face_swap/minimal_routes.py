@@ -1,6 +1,7 @@
 """API route handlers."""
 
 from fastapi import APIRouter, Depends, UploadFile, HTTPException, status
+from .dependencies import get_settings
 from .icons8.client import Icons8Client
 from .icons8.models import FaceSwapResponse
 from .config import Settings
@@ -8,14 +9,14 @@ from .s3 import S3Service, FileUploadRequest
 
 router = APIRouter()
 
-def get_icons8_client(settings: Settings = Depends()) -> Icons8Client:
+def get_icons8_client(settings: Settings = Depends(get_settings)) -> Icons8Client:
     """Dependency for Icons8 client instance."""
     return Icons8Client(
         api_key=settings.icons8_api_key,
         base_url=settings.icons8_base_url
     )
 
-def get_s3_service(settings: Settings = Depends()) -> S3Service:
+def get_s3_service(settings: Settings = Depends(get_settings)) -> S3Service:
     """Dependency for S3 service instance."""
     return S3Service(settings)
 

@@ -1,13 +1,21 @@
 """FastAPI application factory."""
 
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from .config import Settings
 from .minimal_routes import router
+from .dependencies import get_settings
 
-def get_settings() -> Settings:
-    """Dependency for application settings."""
-    return Settings()
+# Load environment variables
+load_dotenv()
+
+# Print environment variables on startup
+print("Environment variables:")
+print(f"FACESWAP_API_KEY: {os.getenv('FACESWAP_API_KEY')}")
+print(f"AWS_ACCESS_KEY_ID: {os.getenv('AWS_ACCESS_KEY_ID')}")
+print(f"AWS_SECRET_ACCESS_KEY: {os.getenv('AWS_SECRET_ACCESS_KEY')}")
+print(f"S3_BUCKET: {os.getenv('S3_BUCKET')}")
 
 app = FastAPI(title="Face Swap API")
 

@@ -2,7 +2,7 @@
 
 from enum import IntEnum
 from typing import NewType, Optional, List
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, Field
 
 ImageId = NewType("ImageId", str)
 
@@ -48,4 +48,4 @@ class FaceSwapResponse(BaseModel):
     id: ImageId
     processed: Optional[ProcessedImage] = None
     status: ProcessStatus
-    status_name: str
+    status_name: str = Field(alias="statusName")

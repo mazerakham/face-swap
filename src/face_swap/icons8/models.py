@@ -12,6 +12,7 @@ class ProcessStatus(IntEnum):
     PROCESSING = 1
     READY = 2
     ERROR = 3
+    FAILED = 4  # Additional status from Icons8 API
 
 class BoundaryAdjustments(BaseModel):
     """Adjustments for face swapping."""

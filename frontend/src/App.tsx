@@ -59,46 +59,45 @@ function App() {
     setState(prev => ({ ...prev, error: undefined, isLoading: true }));
 
     try {
-      // Start face swap job
       const response = await fetch('http://localhost:8000/api/v1/swap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          target_url: state.targetUrl,
-          face_tasks: [{
-            source_url: state.sourceUrl
-          }]
+          source_url: state.sourceUrl,
+          target_url: state.targetUrl
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to start face swap');
+        throw new Error('Face swap failed');
       }
 
-      const { id } = await response.json();
+      const result = await response.json();
+      const jobId = result.id;
 
       // Poll for results
       while (true) {
-        const statusResponse = await fetch(`http://localhost:8000/api/v1/status/${id}`);
+        const statusResponse = await fetch(`http://localhost:8000/api/v1/swap/${jobId}`);
         if (!statusResponse.ok) {
-          throw new Error('Failed to get status');
+          throw new Error('Failed to check job status');
         }
 
-        const result = await statusResponse.json();
+        const statusResult = await statusResponse.json();
         
-        if (result.status === 2 && result.processed) {
+        if (statusResult.status === 2 && statusResult.processed?.url) {
           setState(prev => ({
             ...prev,
-            resultUrl: result.processed.url,
+            resultUrl: statusResult.processed.url,
             isLoading: false
           }));
           break;
-        } else if (result.status === 2 || result.error) {
-          throw new Error(result.error || 'Face swap failed');
+        } else if (statusResult.status === 3 || statusResult.status === 4) {
+          throw new Error('Face swap processing failed');
         }
 
+        // Wait 2 seconds before polling again
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
     } catch (error) {

@@ -42,6 +42,8 @@
         </rule>
         <rule>No try-excepts.  Fail fast everywhere possible.</rule>
         <rule>Primary git branch is `master`.</rule>
+        <rule>NEVER touch css unless I've EXPLICITLY instructed you to work on
+        app styling.</rule>
     </rules>
 
     <long-term-memory>
@@ -49,13 +51,17 @@
             I'm building a simple API and UI to automate a workflow
             for doing an image face-swap using an existing API.  
         </note>
+        <note>
+            Start app:
+            ```
+            uvicorn face_swap.app:app --reload  # Terminal 1
+            cd frontend && npm start            # Terminal 2
+            ```
+        </note>
+        
     </long-term-memory>
 
     <current-task>
-      Make sure the fastAPI API works by running it locally and 
-      sending it a test request. 
-    </current-task>
-    <next-task>
         src/scripts/faceswap_experiment now has a "successful experiment"
         in that the Faceswap API client is now working in the sense that
         it can send a successful request to the faceswap API to swap faces
@@ -72,5 +78,5 @@
         because public image URLs need to be sent to the API.  Assume any
         API keys and AWS necessities are in .env and I will put them in
         for you. 
-    </next-task>
+    </current-task>
 </cline-context>

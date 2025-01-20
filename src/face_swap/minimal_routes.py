@@ -52,11 +52,29 @@ async def upload_image(
     url = s3_service.upload(request)
     return {"url": url}
 
+from pydantic import BaseModel, HttpUrl
+
+class FaceSwapRequest(BaseModel):
+    source_url: HttpUrl
+    target_url: HttpUrl
+
+from .icons8.models import ImageId
+
 @router.post("/swap", response_model=FaceSwapResponse)
 async def swap_faces(
-    source_url: str,
-    target_url: str,
+    request: FaceSwapRequest,
     client: Icons8Client = Depends(get_icons8_client)
 ) -> FaceSwapResponse:
     """Submit a face swap request."""
-    return await client.swap_faces(source_url=source_url, target_url=target_url)
+    return await client.swap_faces(
+        source_url=str(request.source_url), 
+        target_url=str(request.target_url)
+    )
+
+@router.get("/swap/{job_id}", response_model=FaceSwapResponse)
+async def get_swap_status(
+    job_id: str,
+    client: Icons8Client = Depends(get_icons8_client)
+) -> FaceSwapResponse:
+    """Get status of a face swap job."""
+    return await client.get_job_status(ImageId(job_id))

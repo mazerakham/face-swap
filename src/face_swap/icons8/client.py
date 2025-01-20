@@ -2,6 +2,7 @@
 
 import logging
 from typing import List, Optional
+from urllib.parse import quote
 from httpx import AsyncClient, Response
 from pydantic import HttpUrl
 from .models import (
@@ -9,6 +10,7 @@ from .models import (
     FaceSwapResponse,
     ImageId,
     FaceTask,
+    Icons8Error,
 )
 
 logger = logging.getLogger(__name__)
@@ -22,16 +24,23 @@ class Icons8Client:
             
         self.base_url = base_url
         self.api_key = api_key
-        self.client = AsyncClient(base_url=base_url)
+        self.client = AsyncClient(
+            base_url=base_url,
+            timeout=60.0  # 60 second timeout for all requests
+        )
     
     async def swap_faces(self, source_url: str, target_url: str) -> FaceSwapResponse:
         """Submit a face swap job to Icons8."""
+        # URL encode the URLs to handle spaces and special characters
+        encoded_target_url = quote(target_url, safe=':/?=')
+        encoded_source_url = quote(source_url, safe=':/?=')
+        
         request = FaceSwapRequest(
-            target_url=HttpUrl(target_url),
-            face_tasks=[FaceTask(source_url=HttpUrl(source_url))]
+            target_url=encoded_target_url,
+            face_tasks=[FaceTask(source_url=encoded_source_url)]
         )
         
-        request_data = request.model_dump()
+        request_data = request.dict()
         logger.info("Submitting face swap request", extra={
             "source_url": source_url,
             "target_url": target_url,
@@ -42,13 +51,20 @@ class Icons8Client:
         response = await self.client.post(
             "/process_image",
             params={"token": self.api_key},
-            json=request.model_dump()
+            json=request.dict()
         )
         
         response_data = response.json()
         logger.debug(f"Face swap response data: {response_data}")  # Debug print
         self._log_response(response, "Face swap request")
-        return FaceSwapResponse.model_validate(response_data)
+        
+        if response.status_code >= 400:
+            raise Icons8Error(
+                status_code=response.status_code,
+                detail=response_data.get('error', 'Unknown error')
+            )
+            
+        return FaceSwapResponse.parse_obj(response_data)
     
     async def get_job_status(self, job_id: ImageId) -> FaceSwapResponse:
         """Get the status of a face swap job."""
@@ -62,7 +78,14 @@ class Icons8Client:
         response_data = response.json()
         logger.debug(f"Job status response data: {response_data}")  # Debug print
         self._log_response(response, "Job status check")
-        return FaceSwapResponse.model_validate(response_data)
+        
+        if response.status_code >= 400:
+            raise Icons8Error(
+                status_code=response.status_code,
+                detail=response_data.get('error', 'Unknown error')
+            )
+            
+        return FaceSwapResponse.parse_obj(response_data)
     
     async def list_jobs(self) -> List[FaceSwapResponse]:
         """Get list of face swap jobs."""
@@ -75,7 +98,7 @@ class Icons8Client:
         
         self._log_response(response, "List jobs")
         data = response.json()
-        return [FaceSwapResponse.model_validate(img) for img in data["images"]]
+        return [FaceSwapResponse.parse_obj(img) for img in data["images"]]
         
     def _log_response(self, response: Response, context: str) -> None:
         """Log API response details."""

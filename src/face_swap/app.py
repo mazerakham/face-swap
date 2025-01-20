@@ -8,6 +8,9 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from .minimal_routes import router
 from .dependencies import get_settings
+from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 def setup_logging() -> None:
     """Configure logging for the application."""
@@ -52,12 +55,20 @@ logger.info("Environment variables loaded", extra={
 
 app = FastAPI(title="Face Swap API")
 
+origins = [
+    "http://localhost:3000",  # Assuming your local frontend runs on port 3000
+    "https://face-swap-5vb8.onrender.com"  # Your Render deployment URL
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(router, prefix="/api/v1", dependencies=[Depends(get_settings)])
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+app.mount("/", StaticFiles(directory=os.path.join(BASE_DIR, "public"), html=True), name="static")

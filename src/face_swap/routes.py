@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends, UploadFile, File
 import boto3
 from botocore.config import Config
 from .icons8.client import Icons8Client
-from .icons8.models import FaceSwapRequest, FaceSwapResponse, ImageId
+from .icons8.models import Icons8Error, ImageId
 from .config import Settings
+from .models import SwapFaceRequest, SwapFaceResult
 
 router = APIRouter()
 
@@ -45,19 +46,27 @@ async def upload_image(
     url = f"https://{settings.s3_bucket}.s3.{settings.aws_region}.amazonaws.com/{key}"
     return {"url": url}
 
-@router.post("/swap", response_model=FaceSwapResponse)
+@router.post("/swap", response_model=SwapFaceResult, status_code=status.HTTP_201_CREATED)
 async def swap_faces(
     source_url: str,
     target_url: str,
     client: Icons8Client = Depends(get_icons8_client)
-) -> FaceSwapResponse:
+) -> SwapFaceResult:
     """Submit a face swap request."""
-    return await client.swap_faces(source_url=source_url, target_url=target_url)
+    try:
+        response = await client.swap_faces(source_url=source_url, target_url=target_url)
+        return SwapFaceResult.from_icons8_response(response)
+    except Icons8Error as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
 
-@router.get("/status/{job_id}", response_model=FaceSwapResponse)
+@router.get("/swap/{job_id}", response_model=SwapFaceResult)
 async def get_swap_status(
     job_id: str,
     client: Icons8Client = Depends(get_icons8_client)
-) -> FaceSwapResponse:
+) -> SwapFaceResult:
     """Get status of a face swap job."""
-    return await client.get_job_status(ImageId(job_id))
+    try:
+        response = await client.get_job_status(ImageId(job_id))
+        return SwapFaceResult.from_icons8_response(response)
+    except Icons8Error as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)

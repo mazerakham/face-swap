@@ -2,7 +2,7 @@
 
 from enum import IntEnum
 from typing import NewType, Optional, List
-from pydantic import BaseModel, HttpUrl, Field
+from pydantic import BaseModel, AnyHttpUrl, Field
 
 ImageId = NewType("ImageId", str)
 
@@ -13,6 +13,13 @@ class ProcessStatus(IntEnum):
     READY = 2
     ERROR = 3
     FAILED = 4
+
+class Icons8Error(Exception):
+    """Icons8 API error."""
+    def __init__(self, status_code: int, detail: str):
+        self.status_code = status_code
+        self.detail = detail
+        super().__init__(f"Icons8 API error: {detail}")
 
 class BoundaryAdjustments(BaseModel):
     """Adjustments for face swapping."""
@@ -27,7 +34,7 @@ class BoundaryAdjustments(BaseModel):
 
 class FaceTask(BaseModel):
     """Single face swap task configuration."""
-    source_url: HttpUrl
+    source_url: AnyHttpUrl = Field(..., description="URL of the source image")
     source_landmarks: List[float] = [
         392.36614990234375, 373.7126159667969, 548.9041748046875,
         370.4452209472656, 479.63702392578125, 481.96380615234375,
@@ -44,7 +51,7 @@ class FaceTask(BaseModel):
 
 class FaceSwapRequest(BaseModel):
     """Request model for face swap operation."""
-    target_url: HttpUrl
+    target_url: AnyHttpUrl = Field(..., description="URL of the target image")
     face_tasks: List[FaceTask]
 
 class ProcessedImage(BaseModel):
@@ -52,7 +59,7 @@ class ProcessedImage(BaseModel):
     width: int
     height: int
     type: str
-    url: HttpUrl
+    url: AnyHttpUrl = Field(..., description="URL of the processed image")
 
 class FaceSwapResponse(BaseModel):
     """Response model for face swap operation."""

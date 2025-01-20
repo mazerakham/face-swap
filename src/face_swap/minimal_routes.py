@@ -3,9 +3,10 @@
 from fastapi import APIRouter, Depends, UploadFile, HTTPException, status
 from .dependencies import get_settings
 from .icons8.client import Icons8Client
-from .icons8.models import FaceSwapResponse
+from .icons8.models import Icons8Error, ImageId
 from .config import Settings
 from .s3 import S3Service, FileUploadRequest
+from .models import SwapFaceRequest, SwapFaceResult
 
 router = APIRouter()
 
@@ -52,29 +53,29 @@ async def upload_image(
     url = s3_service.upload(request)
     return {"url": url}
 
-from pydantic import BaseModel, HttpUrl
-
-class FaceSwapRequest(BaseModel):
-    source_url: HttpUrl
-    target_url: HttpUrl
-
-from .icons8.models import ImageId
-
-@router.post("/swap", response_model=FaceSwapResponse)
+@router.post("/swap", response_model=SwapFaceResult, status_code=status.HTTP_201_CREATED)
 async def swap_faces(
-    request: FaceSwapRequest,
+    request: SwapFaceRequest,
     client: Icons8Client = Depends(get_icons8_client)
-) -> FaceSwapResponse:
+) -> SwapFaceResult:
     """Submit a face swap request."""
-    return await client.swap_faces(
-        source_url=str(request.source_url), 
-        target_url=str(request.target_url)
-    )
+    try:
+        response = await client.swap_faces(
+            source_url=str(request.source_url), 
+            target_url=str(request.target_url)
+        )
+        return SwapFaceResult.from_icons8_response(response)
+    except Icons8Error as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
 
-@router.get("/swap/{job_id}", response_model=FaceSwapResponse)
+@router.get("/swap/{job_id}", response_model=SwapFaceResult)
 async def get_swap_status(
     job_id: str,
     client: Icons8Client = Depends(get_icons8_client)
-) -> FaceSwapResponse:
+) -> SwapFaceResult:
     """Get status of a face swap job."""
-    return await client.get_job_status(ImageId(job_id))
+    try:
+        response = await client.get_job_status(ImageId(job_id))
+        return SwapFaceResult.from_icons8_response(response)
+    except Icons8Error as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)

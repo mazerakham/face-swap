@@ -1,5 +1,5 @@
 interface SwapResponse {
-  id: string;
+  job_id: string;
 }
 
 interface SwapStatusResponse {
@@ -12,10 +12,11 @@ interface SwapStatusResponse {
 export class FaceSwapClient {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'http://localhost:8000/api/v1') {
+  constructor(baseUrl: string = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api/v1') {
     this.baseUrl = baseUrl;
+    console.log('API Base URL:', process.env.REACT_APP_API_BASE_URL); // For debugging
   }
-
+  
   async uploadFile(file: File): Promise<string> {
     const formData = new FormData();
     formData.append('file', file);
@@ -50,7 +51,7 @@ export class FaceSwapClient {
     }
 
     const result: SwapResponse = await response.json();
-    return result.id;
+    return result.job_id;
   }
 
   async checkSwapStatus(jobId: string): Promise<SwapStatusResponse> {

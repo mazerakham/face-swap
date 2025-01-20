@@ -12,7 +12,7 @@ class ProcessStatus(IntEnum):
     PROCESSING = 1
     READY = 2
     ERROR = 3
-    FAILED = 4  # Additional status from Icons8 API
+    FAILED = 4
 
 class BoundaryAdjustments(BaseModel):
     """Adjustments for face swapping."""
@@ -28,8 +28,18 @@ class BoundaryAdjustments(BaseModel):
 class FaceTask(BaseModel):
     """Single face swap task configuration."""
     source_url: HttpUrl
-    source_landmarks: List[int] = []
-    target_landmarks: List[int] = []
+    source_landmarks: List[float] = [
+        392.36614990234375, 373.7126159667969, 548.9041748046875,
+        370.4452209472656, 479.63702392578125, 481.96380615234375,
+        406.66619873046875, 554.4490356445312, 539.323974609375,
+        551.4761352539062
+    ]
+    target_landmarks: List[float] = [
+        529.2066650390625, 131.077392578125, 560.5444946289062,
+        135.17361450195312, 551.2858276367188, 141.26443481445312,
+        533.3395385742188, 160.43634033203125, 559.767578125,
+        163.57125854492188
+    ]
     boundary_adjustments: BoundaryAdjustments = BoundaryAdjustments()
 
 class FaceSwapRequest(BaseModel):

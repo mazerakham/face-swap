@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import './App.css';
+import { faceSwapClient } from './api/faceSwapClient.tsx';
 
 interface SwapState {
   sourceUrl?: string;
@@ -15,20 +16,7 @@ function App() {
   });
 
   const uploadFile = useCallback(async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await fetch('http://localhost:8000/api/v1/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error('Upload failed');
-    }
-
-    const data = await response.json();
-    return data.url;
+    return faceSwapClient.uploadFile(file);
   }, []);
 
   const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>, type: 'source' | 'target') => {
@@ -59,47 +47,13 @@ function App() {
     setState(prev => ({ ...prev, error: undefined, isLoading: true }));
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/swap', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          source_url: state.sourceUrl,
-          target_url: state.targetUrl
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Face swap failed');
-      }
-
-      const result = await response.json();
-      const jobId = result.id;
-
-      // Poll for results
-      while (true) {
-        const statusResponse = await fetch(`http://localhost:8000/api/v1/swap/${jobId}`);
-        if (!statusResponse.ok) {
-          throw new Error('Failed to check job status');
-        }
-
-        const statusResult = await statusResponse.json();
-        
-        if (statusResult.status === 2 && statusResult.processed?.url) {
-          setState(prev => ({
-            ...prev,
-            resultUrl: statusResult.processed.url,
-            isLoading: false
-          }));
-          break;
-        } else if (statusResult.status === 3 || statusResult.status === 4) {
-          throw new Error('Face swap processing failed');
-        }
-
-        // Wait 2 seconds before polling again
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
+      const jobId = await faceSwapClient.initiateFaceSwap(state.sourceUrl, state.targetUrl);
+      const resultUrl = await faceSwapClient.waitForSwapCompletion(jobId);
+      setState(prev => ({
+        ...prev,
+        resultUrl,
+        isLoading: false
+      }));
     } catch (error) {
       setState(prev => ({
         ...prev,

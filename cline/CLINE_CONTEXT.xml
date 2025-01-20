@@ -62,21 +62,14 @@
     </long-term-memory>
 
     <current-task>
-        src/scripts/faceswap_experiment now has a "successful experiment"
-        in that the Faceswap API client is now working in the sense that
-        it can send a successful request to the faceswap API to swap faces
-        on two images given by their public URLs.  
+        The entire face-swapping app, frontend and backend, works EXCEPT
+        for the one detail that the face swap external job, handled by
+        the Icons8 service, is coming back as "failed" inexplicably.  
 
-        face_swap.app runs an API that I think works.  Send it a test
-        request to make sure. 
-
-        Write a simplest-possible frontend that exhibits this, allowing the
-        user to upload two photos, a "source face" and a "target image" into
-        which the face will be transplanted.  
-
-        It is likely that I'll need to give you access to my public S3 bucket
-        because public image URLs need to be sent to the API.  Assume any
-        API keys and AWS necessities are in .env and I will put them in
-        for you. 
+        1. Clean up the javascript code to split out the API calls 
+        to a separate client which will be imported. 
+        2. In the python backend, log API calls to Icons8. 
+        3. Compare the API calls to the working API call in
+        example_faceswap_curl_request.txt.  I know that one is working.
     </current-task>
 </cline-context>

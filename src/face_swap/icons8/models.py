@@ -35,18 +35,8 @@ class BoundaryAdjustments(BaseModel):
 class FaceTask(BaseModel):
     """Single face swap task configuration."""
     source_url: AnyHttpUrl = Field(..., description="URL of the source image")
-    source_landmarks: List[float] = [
-        392.36614990234375, 373.7126159667969, 548.9041748046875,
-        370.4452209472656, 479.63702392578125, 481.96380615234375,
-        406.66619873046875, 554.4490356445312, 539.323974609375,
-        551.4761352539062
-    ]
-    target_landmarks: List[float] = [
-        529.2066650390625, 131.077392578125, 560.5444946289062,
-        135.17361450195312, 551.2858276367188, 141.26443481445312,
-        533.3395385742188, 160.43634033203125, 559.767578125,
-        163.57125854492188
-    ]
+    source_landmarks: List[float]
+    target_landmarks: List[float]
     boundary_adjustments: BoundaryAdjustments = BoundaryAdjustments()
 
 class FaceSwapRequest(BaseModel):
@@ -67,3 +57,21 @@ class FaceSwapResponse(BaseModel):
     processed: Optional[ProcessedImage] = None
     status: ProcessStatus
     status_name: str = Field(alias="statusName")
+
+class Face(BaseModel):
+    """Face detection result."""
+    bbox: List[float]
+    landmarks: List[float]
+
+class ImageFaces(BaseModel):
+    """Face detection results for an image."""
+    img_url: AnyHttpUrl
+    faces: List[Face]
+
+class GetBboxRequest(BaseModel):
+    """Request model for get_bbox endpoint."""
+    urls: List[AnyHttpUrl]
+
+class GetBboxResponse(BaseModel):
+    """Response model for get_bbox endpoint."""
+    __root__: List[ImageFaces]

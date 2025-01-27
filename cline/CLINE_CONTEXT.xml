@@ -62,14 +62,30 @@
     </long-term-memory>
 
     <current-task>
-        The entire face-swapping app, frontend and backend, works EXCEPT
-        for the one detail that the face swap external job, handled by
-        the Icons8 service, is coming back as "failed" inexplicably.  
+        The entire project works.  However, currently, the 
+        face swap using the src/face_swap/icons8/client.py 
+        client is not working.  
 
-        1. Clean up the javascript code to split out the API calls 
-        to a separate client which will be imported. 
-        2. In the python backend, log API calls to Icons8. 
-        3. Compare the API calls to the working API call in
-        example_faceswap_curl_request.txt.  I know that one is working.
+        I spoke with the maintainer of the Icons8 API and have
+        determined that the reason it's not working is that
+        we're sending garbage "landmark" coordinates and need
+        to send accurate ones.  
+
+        The way to do this is to use their auxiliary API
+
+        POST /v1/get_bbox
+
+        which returns a landmarks float array that we can
+        use for the face-swapping request. 
+
+        Implement this.  One note about implementation:
+        The client should "abstract away" this auxiliary
+        API call.  My code should be able to just
+        "do" a face-swap, and the client handles making the
+        auxiliary call to get landmarks before sending
+        the face-swap request with those coordinates. 
+
+        Thus, other than my client, I don't expect
+        any of my other code to change.
     </current-task>
 </cline-context>

@@ -1,5 +1,5 @@
 Base URL: api-faceswapper.icons8.com/api
-
+Swagger docs: https://api-faceswapper.icons8.com/api/v1/documentation
 
 GET ​/v1​/process_images
 Get list of swaped faces
@@ -28,7 +28,9 @@ Response:
 }
 
 POST ​/v1​/process_image
-Swap faces by urls
+Swap faces by urls.  
+Landmarks are necessary.  Use the "get_bbox" API to obtain
+landmarks for an image.
 Params:
 {
   "target_url": "string",
@@ -78,4 +80,28 @@ Response:
   "statusName": "ready"
 }
 
-
+POST /v1/get_bbox
+Get bounding box and landmarks for images by urls
+Params: 
+{
+  "urls": [
+     "https://example.com/my_image_url.png", 
+     "https://example.com/my_image_url_2.png"
+  ]
+}
+Response:
+[
+  {
+    "img_url": "string",
+    "faces": [
+      {
+        "bbox": [
+          0
+        ],
+        "landmarks": [
+          0
+        ]
+      }
+    ]
+  }
+]

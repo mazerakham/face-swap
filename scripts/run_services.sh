@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Start the Python API server
-cd "$(dirname "$0")/.." && PYTHONPATH=$PWD python3 -m face_swap.app &
+cd "$(dirname "$0")/.." && uvicorn face_swap.app:app --reload &
 
 # Wait a moment for the API to initialize
 sleep 2

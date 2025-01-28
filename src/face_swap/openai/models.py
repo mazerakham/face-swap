@@ -1,7 +1,13 @@
 """Data models for OpenAI DALL-E API interactions."""
 
+from enum import Enum
 from typing import List
 from pydantic import BaseModel, AnyHttpUrl, Field
+
+class OpenAIMode(str, Enum):
+    """Operating mode for OpenAI client."""
+    LIVE = "LIVE"
+    TEST = "TEST"
 
 class ImageGenerationRequest(BaseModel):
     """Request model for image generation."""

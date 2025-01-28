@@ -58,34 +58,26 @@
             cd frontend && npm start            # Terminal 2
             ```
         </note>
-        
     </long-term-memory>
 
     <current-task>
-        The entire project works.  However, currently, the 
-        face swap using the src/face_swap/icons8/client.py 
-        client is not working.  
+      Before we continue the main project, we need to write
+      an experimental script ( ./src/scripts ) which will
+      import from src/face_swap/openai/... This will be a 
+      proof-of-concept that our OpenAI integration is working.
 
-        I spoke with the maintainer of the Icons8 API and have
-        determined that the reason it's not working is that
-        we're sending garbage "landmark" coordinates and need
-        to send accurate ones.  
+      In that directory (which you will create), implement 
+      an OpenAI / Dall-E client.  Follow the style established
+      in the icons8 client (src/face_swap/icons8).
 
-        The way to do this is to use their auxiliary API
+      For now, the client should provide (1) a method for 
+      generating an image from a prompt, and (2) a method
+      for generating an image from a prompt plus an existing
+      image. 
 
-        POST /v1/get_bbox
-
-        which returns a landmarks float array that we can
-        use for the face-swapping request. 
-
-        Implement this.  One note about implementation:
-        The client should "abstract away" this auxiliary
-        API call.  My code should be able to just
-        "do" a face-swap, and the client handles making the
-        auxiliary call to get landmarks before sending
-        the face-swap request with those coordinates. 
-
-        Thus, other than my client, I don't expect
-        any of my other code to change.
+      Write a script which uses the client, thereby 
+      demonstrating that it works.  When you submit your
+      solution, call out what .env variable I need to set
+      to make it work. 
     </current-task>
 </cline-context>

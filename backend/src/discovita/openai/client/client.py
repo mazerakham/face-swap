@@ -23,7 +23,7 @@ class DallEClient:
     
     def __init__(
         self,
-        api_key: Optional[str],
+        api_key: str,
         base_url: str = "https://api.openai.com/v1",
         test_mode: Optional[bool] = None
     ) -> None:

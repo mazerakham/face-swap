@@ -3,6 +3,7 @@ import WelcomeScreen from './components/WelcomeScreen'
 import ImageUpload from './components/ImageUpload'
 import Questions from './components/Questions'
 import ImageFeedback from './components/ImageFeedback'
+import ImageGeneration from './components/ImageGeneration'
 import FinalResult from './components/FinalResult'
 import { workflowService, WorkflowStep, WorkflowState } from './service/WorkflowService'
 
@@ -28,6 +29,7 @@ const App: React.FC = () => {
       case WorkflowStep.Questions:
         return <Questions />
       case WorkflowStep.ImageGeneration:
+        return <ImageGeneration />
       case WorkflowStep.ImageFeedback:
         return <ImageFeedback />
       case WorkflowStep.FinalResult:

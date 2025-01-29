@@ -9,19 +9,23 @@ class OpenAIMode(str, Enum):
     LIVE = "LIVE"
     TEST = "TEST"
 
+class ImageSize(str, Enum):
+    """Available image sizes for DALL-E."""
+    SIZE_1024 = "1024x1024"
+
 class ImageGenerationRequest(BaseModel):
     """Request model for image generation."""
     model: str = "dall-e-3"
     prompt: str = Field(..., description="Text description of the desired image")
     n: int = 1
-    size: str = "1792x1024"  # 16:9 aspect ratio, should be under 1MB
+    size: str = ImageSize.SIZE_1024
     quality: str = "standard"
 
 class ImageEditRequest(BaseModel):
     """Request model for image editing."""
     prompt: str = Field(..., description="Text description of the desired image")
     n: int = 1
-    size: str = "1792x1024"  # 16:9 aspect ratio, should be under 1MB
+    size: str = ImageSize.SIZE_1024
 
 class GeneratedImage(BaseModel):
     """Single generated image result."""

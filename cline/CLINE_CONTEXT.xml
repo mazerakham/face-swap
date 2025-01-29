@@ -61,23 +61,24 @@
     </long-term-memory>
 
     <current-task>
-      Before we continue the main project, we need to write
-      an experimental script ( ./src/scripts ) which will
-      import from src/face_swap/openai/... This will be a 
-      proof-of-concept that our OpenAI integration is working.
+      We have attempted to implement an OpenAI/Dall-E client,
+      but editing is not working. 
 
-      In that directory (which you will create), implement 
-      an OpenAI / Dall-E client.  Follow the style established
-      in the icons8 client (src/face_swap/icons8).
+      We need to write a script in 
+      src/scripts/dalle/dalle_experiment_4 DIRECTORY
+      (make a new directory)
 
-      For now, the client should provide (1) a method for 
-      generating an image from a prompt, and (2) a method
-      for generating an image from a prompt plus an existing
-      image. 
+      that demonstrates a successful image edit.   
 
-      Write a script which uses the client, thereby 
-      demonstrating that it works.  When you submit your
-      solution, call out what .env variable I need to set
-      to make it work. 
+      Generate an image of darth vader. 
+
+      Send it in an "edit image" request that requests
+      that Dall-E make it scarier by giving him red eyes.
+
+      cline/open_ai_docs has some API documentation.
+
+      Experiment with a fully-transparent mask as 
+      well as sending a mask which is just a copy 
+      of the original image.  
     </current-task>
 </cline-context>

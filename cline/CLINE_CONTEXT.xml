@@ -67,10 +67,16 @@
     </long-term-memory>
 
     <current-task>
-        I am going to be implementing the front-end for this project.  
+        The project structure is in place.  
 
-        1.  Read and understand cline/product_plan.txt.         2.  Read and understand project_structure_requirements.txt.
+        Backend is all or mostly all implemented.  
 
+        Implement the entire front-end.  
 
+        Read and understand all docs in ./cline/plan for 
+        product specs and project structure before you
+        start.  Ask me clarifying quesitons and update
+        the docs if anything does not make perfect sense
+        or you would recommend a better way to do things.
     </current-task>
 </cline-context>

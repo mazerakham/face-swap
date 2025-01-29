@@ -1,15 +1,15 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="face_swap",
+    name="discovita",
     version="0.0.1",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     install_requires=[
-        "fastapi>=0.104.1",
+        "fastapi<1.0.0",
         "uvicorn>=0.24.0",
         "httpx>=0.25.1",
-        "pydantic>=2.5.1",
+        "pydantic<2.0.0",
         "python-dotenv>=1.0.0",
     ],
     extras_require={
@@ -21,5 +21,3 @@ setup(
     },
     python_requires=">=3.11",
 )
-
-from setuptools import setup, find_packages

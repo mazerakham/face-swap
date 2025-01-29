@@ -84,8 +84,32 @@
         3.  The third screen where the user answers questions
         seems to basically work. 
 
-        4.  The next screen doesn't work - no image is shown,
-        and no image generation API request seems to go out,
-        or if it does, it doesn't work.  Help me troubleshoot.
+        4.  The generate image screen works.  An image
+        is generated. 
+
+        5.  The following screen where user can repeatedly
+        give feedback on the image and regenerate is working.
+
+        6. The final screen with the face swap doesn't work. 
+
+        Before we move on, please troubleshoot
+         this deployment issue that just arose:
+
+         babel-preset-react-app is part of the create-react-app project, which
+is not maintianed anymore. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.
+  
+Treating warnings as errors because process.env.CI = true.
+Most CI servers set it automatically.
+Failed to compile.
+[eslint] 
+src/api/client.ts
+  Line 1:10:  'FaceSwapRequest' is defined but never used  @typescript-eslint/no-unused-vars
+src/components/FinalResult.tsx
+  Line 25:13:  Redundant alt attribute. Screen-readers already announce `img` tags as an image. You don’t need to use the words `image`, `photo,` or `picture` (or any specified custom words) in the alt prop  jsx-a11y/img-redundant-alt
+==> Build failed 😞
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
     </current-task>
 </cline-context>

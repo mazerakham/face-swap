@@ -6,7 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from .minimal_routes import router
+from .routes import router
 from .dependencies import get_settings
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI

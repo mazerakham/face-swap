@@ -1,60 +1,69 @@
 """API route handlers."""
 
-from fastapi import APIRouter, Depends, UploadFile, File
-import boto3
-from botocore.config import Config
+from fastapi import APIRouter, Depends, UploadFile, HTTPException, status
+from .dependencies import get_settings
 from .icons8.client import Icons8Client
 from .icons8.models import Icons8Error, ImageId
 from .config import Settings
+from .s3 import S3Service, FileUploadRequest
 from .models import SwapFaceRequest, SwapFaceResult
 
 router = APIRouter()
 
-def get_icons8_client(settings: Settings = Depends()) -> Icons8Client:
+def get_icons8_client(settings: Settings = Depends(get_settings)) -> Icons8Client:
     """Dependency for Icons8 client instance."""
     return Icons8Client(
         api_key=settings.icons8_api_key,
         base_url=settings.icons8_base_url
     )
 
-def get_s3_client(settings: Settings = Depends()):
-    """Dependency for S3 client instance."""
-    return boto3.client(
-        's3',
-        aws_access_key_id=settings.aws_access_key_id,
-        aws_secret_access_key=settings.aws_secret_access_key,
-        config=Config(region_name=settings.aws_region)
-    )
+def get_s3_service(settings: Settings = Depends(get_settings)) -> S3Service:
+    """Dependency for S3 service instance."""
+    return S3Service(settings)
+
+@router.get("/health")
+async def health_check() -> dict[str, str]:
+    """Health check endpoint."""
+    return {"status": "healthy"}
 
 @router.post("/upload")
 async def upload_image(
-    file: UploadFile = File(...),
-    s3_client = Depends(get_s3_client),
-    settings: Settings = Depends()
+    file: UploadFile,
+    s3_service: S3Service = Depends(get_s3_service)
 ) -> dict[str, str]:
     """Upload an image to S3 and return its public URL."""
+    if not file.filename:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Filename is required"
+        )
+    
+    if not file.content_type:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Content type is required"
+        )
+    
     content = await file.read()
-    key = f"uploads/{file.filename}"
-    
-    s3_client.put_object(
-        Bucket=settings.s3_bucket,
-        Key=key,
-        Body=content,
-        ContentType=file.content_type
+    request = FileUploadRequest(
+        filename=file.filename,
+        content_type=file.content_type,
+        content=content
     )
-    
-    url = f"https://{settings.s3_bucket}.s3.{settings.aws_region}.amazonaws.com/{key}"
+    url = s3_service.upload(request)
     return {"url": url}
 
 @router.post("/swap", response_model=SwapFaceResult, status_code=status.HTTP_201_CREATED)
 async def swap_faces(
-    source_url: str,
-    target_url: str,
+    request: SwapFaceRequest,
     client: Icons8Client = Depends(get_icons8_client)
 ) -> SwapFaceResult:
     """Submit a face swap request."""
     try:
-        response = await client.swap_faces(source_url=source_url, target_url=target_url)
+        response = await client.swap_faces(
+            source_url=str(request.source_url), 
+            target_url=str(request.target_url)
+        )
         return SwapFaceResult.from_icons8_response(response)
     except Icons8Error as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)

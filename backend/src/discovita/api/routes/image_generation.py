@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from ...config import Settings
 from ...dependencies import get_settings
 from ...models import GenerateImageRequest, GenerateImageResponse
-from ...openai.client.operations import generate_image
+from ...service.openai.client.operations import generate_image
 from ..dependencies import get_openai_client
 
 router = APIRouter()

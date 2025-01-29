@@ -54,8 +54,8 @@
         <note>
             Start app:
             ```
-            uvicorn face_swap.app:app --reload  # Terminal 1
-            cd frontend && npm start            # Terminal 2
+            cd backend && uvicorn discovita.app:app --reload  # Terminal 1
+            cd frontend && npm start                          # Terminal 2
             ```
         </note>
         <note>
@@ -90,29 +90,28 @@
         5.  The following screen where user can repeatedly
         give feedback on the image and regenerate is working.
 
-        6. The final screen with the face swap doesn't work. 
+        6. The final screen with the face swap almost, but 
+        doesn't quite work. 
 
-        I looked more deeply at this.  The front-end is 
-        correctly sending an API request to backend for
-        a faceswap.  In fact, I recommend you put this 
-        into a curl request or python script to
-        trouble-shoot. 
+        The following response is being returned by the face
+        swap API to the front-end:
 
-        Request URL: POST to http://localhost:8000/api/v1/swap
-        Request body:
         {
-          "source_url": "https://jake-public-01.s3.us-east-1.amazonaws.com/uploads/base_face_darth.png",
-          "target_url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-OqfnbUaLOOzFNJuvjw0vLyqa/user-t7MEMNrMjJHzF1XFnZ6aWO0K/img-19FvB0Azl1BjMUH5uzCsQP6z.png?st=2025-01-29T17%3A58%3A16Z&se=2025-01-29T19%3A58%3A16Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-29T00%3A46%3A32Z&ske=2025-01-30T00%3A46%3A32Z&sks=b&skv=2024-08-04&sig=XzmW33NTSPs17OT1TOw3LPZQvG3aNcZxTjEMx1ISFaM%3D"
+            "job_id": "679a803ef6ae25000bc7f2ac",
+            "processed": null,
+            "status": 0,
+            "status_name": "queue"
         }
-        Error to troubleshoot:
-        "Error occured when getting face bounding boxes"
 
-        This is almost-certainly an issue with Icon8 API, but 
-        I wasn't getting this problem before, so I suspect we're
-        sending an invalid image.  
+        What actually has to happen is the backend has to poll this
+        job ID until the status is complete (check the enum
+        for the official name).  Then it should
+        return the image URL to front-end.
 
-        As I said, write a script to trouble-shoot this API endpoint.
-        Consider print statements or any technique you see fit
-        to check our API request(s) to Icon8. 
+        I think you'll need to rewrite the API logic as well
+        as its response object.  It makes no sense for 
+        my API (the discovita API) to directly return the 
+        Icon8 response object with its "job_id".  That is
+        not relevant to front-end. 
     </current-task>
 </cline-context>

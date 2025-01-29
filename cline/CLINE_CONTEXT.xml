@@ -92,24 +92,27 @@
 
         6. The final screen with the face swap doesn't work. 
 
-        Before we move on, please troubleshoot
-         this deployment issue that just arose:
+        I looked more deeply at this.  The front-end is 
+        correctly sending an API request to backend for
+        a faceswap.  In fact, I recommend you put this 
+        into a curl request or python script to
+        trouble-shoot. 
 
-         babel-preset-react-app is part of the create-react-app project, which
-is not maintianed anymore. It is thus unlikely that this bug will
-ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
-your devDependencies to work around this error. This will make this message
-go away.
-  
-Treating warnings as errors because process.env.CI = true.
-Most CI servers set it automatically.
-Failed to compile.
-[eslint] 
-src/api/client.ts
-  Line 1:10:  'FaceSwapRequest' is defined but never used  @typescript-eslint/no-unused-vars
-src/components/FinalResult.tsx
-  Line 25:13:  Redundant alt attribute. Screen-readers already announce `img` tags as an image. You don’t need to use the words `image`, `photo,` or `picture` (or any specified custom words) in the alt prop  jsx-a11y/img-redundant-alt
-==> Build failed 😞
-==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+        Request URL: POST to http://localhost:8000/api/v1/swap
+        Request body:
+        {
+          "source_url": "https://jake-public-01.s3.us-east-1.amazonaws.com/uploads/base_face_darth.png",
+          "target_url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-OqfnbUaLOOzFNJuvjw0vLyqa/user-t7MEMNrMjJHzF1XFnZ6aWO0K/img-19FvB0Azl1BjMUH5uzCsQP6z.png?st=2025-01-29T17%3A58%3A16Z&se=2025-01-29T19%3A58%3A16Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-01-29T00%3A46%3A32Z&ske=2025-01-30T00%3A46%3A32Z&sks=b&skv=2024-08-04&sig=XzmW33NTSPs17OT1TOw3LPZQvG3aNcZxTjEMx1ISFaM%3D"
+        }
+        Error to troubleshoot:
+        "Error occured when getting face bounding boxes"
+
+        This is almost-certainly an issue with Icon8 API, but 
+        I wasn't getting this problem before, so I suspect we're
+        sending an invalid image.  
+
+        As I said, write a script to trouble-shoot this API endpoint.
+        Consider print statements or any technique you see fit
+        to check our API request(s) to Icon8. 
     </current-task>
 </cline-context>

@@ -6,12 +6,23 @@ from .icons8.client import Icons8Client
 from .icons8.models import Icons8Error, ImageId
 from .config import Settings
 from .s3 import S3Service, FileUploadRequest
-from .models import SwapFaceRequest, SwapFaceResult, GenerateImageRequest, GenerateImageResponse
+from .models import SwapFaceRequest, SwapFaceResult
 from .openai.client.operations import generate_image
 from httpx import AsyncClient
 from pydantic import BaseModel
 
 router = APIRouter()
+
+class GenerateImageRequest(BaseModel):
+    setting: str
+    outfit: str
+    emotion: str
+    userFeedback: str | None = None
+    previousAugmentedPrompt: str | None = None
+
+class GenerateImageResponse(BaseModel):
+    imageUrl: str
+    augmentedPrompt: str
 
 def get_icons8_client(settings: Settings = Depends(get_settings)) -> Icons8Client:
     """Dependency for Icons8 client instance."""
@@ -56,7 +67,6 @@ async def upload_image(
     url = s3_service.upload(request)
     return {"url": url}
 
-
 @router.post("/generate", response_model=GenerateImageResponse)
 async def generate_scene(
     request: GenerateImageRequest,
@@ -79,7 +89,7 @@ async def generate_scene(
             imageUrl=image.url,
             augmentedPrompt=image.revised_prompt
         )
-    
+
 @router.post("/swap", response_model=SwapFaceResult, status_code=status.HTTP_201_CREATED)
 async def swap_faces(
     request: SwapFaceRequest,

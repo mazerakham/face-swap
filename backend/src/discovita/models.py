@@ -4,6 +4,17 @@ from pydantic import BaseModel, HttpUrl
 from enum import IntEnum
 from typing import Optional
 
+class GenerateImageRequest(BaseModel):
+    setting: str
+    outfit: str
+    emotion: str
+    userFeedback: str | None = None
+    previousAugmentedPrompt: str | None = None
+
+class GenerateImageResponse(BaseModel):
+    imageUrl: str
+    augmentedPrompt: str
+    
 class SwapFaceRequest(BaseModel):
     """Request model for face swap operation."""
     source_url: HttpUrl

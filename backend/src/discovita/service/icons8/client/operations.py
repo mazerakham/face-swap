@@ -17,9 +17,8 @@ from .logging import log_response
 
 async def get_landmarks(client: AsyncClient, api_key: str, urls: List[str]) -> GetBboxResponse:
     """Get face landmarks for the given image URLs."""
-    encoded_urls = [quote(url, safe=':/?=') for url in urls]
-    # Parse URLs using pydantic's parse_obj_as
-    request = GetBboxRequest(urls=parse_obj_as(List[AnyHttpUrl], encoded_urls))
+    # Let pydantic handle URL parsing and encoding
+    request = GetBboxRequest(urls=parse_obj_as(List[AnyHttpUrl], urls))
     
     response = await client.post(
         "/get_bbox",
@@ -40,14 +39,11 @@ async def get_landmarks(client: AsyncClient, api_key: str, urls: List[str]) -> G
 
 async def swap_faces(client: AsyncClient, api_key: str, source_url: str, target_url: str) -> FaceSwapResponse:
     """Submit a face swap job to Icons8."""
-    encoded_target_url = quote(target_url, safe=':/?=')
-    encoded_source_url = quote(source_url, safe=':/?=')
+    # Let pydantic handle URL parsing and encoding
+    target_http_url = parse_obj_as(AnyHttpUrl, target_url)
+    source_http_url = parse_obj_as(AnyHttpUrl, source_url)
     
-    # Parse URLs using pydantic's parse_obj_as
-    target_http_url = parse_obj_as(AnyHttpUrl, encoded_target_url)
-    source_http_url = parse_obj_as(AnyHttpUrl, encoded_source_url)
-    
-    landmarks_response = await get_landmarks(client, api_key, [encoded_source_url, encoded_target_url])
+    landmarks_response = await get_landmarks(client, api_key, [source_url, target_url])
     source_faces = next(img for img in landmarks_response.__root__ if img.img_url == source_http_url)
     target_faces = next(img for img in landmarks_response.__root__ if img.img_url == target_http_url)
     

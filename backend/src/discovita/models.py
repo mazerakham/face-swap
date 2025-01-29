@@ -56,3 +56,12 @@ class SwapFaceResult(BaseModel):
             status=ProcessingStatus(response.status),
             status_name=response.status_name
         )
+    
+    def to_frontend_response(self) -> dict:
+        """Convert to frontend-expected format."""
+        if self.status == ProcessingStatus.READY and self.processed:
+            return {"url": str(self.processed.url), "status": "complete"}
+        elif self.status in (ProcessingStatus.ERROR, ProcessingStatus.FAILED):
+            return {"url": "", "status": "error"}
+        else:
+            return {"url": "", "status": "processing"}

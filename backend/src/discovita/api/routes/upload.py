@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, UploadFile, HTTPException, status
 from ...config import Settings
 from ...dependencies import get_settings
-from ...s3 import S3Service, FileUploadRequest
+from ...service.s3 import S3Service, FileUploadRequest
 
 router = APIRouter()
 

@@ -3,7 +3,7 @@
 import boto3
 from botocore.config import Config
 from .models import FileUploadRequest
-from ..config import Settings
+from ...config import Settings
 
 class S3Service:
     """Service for S3 operations."""

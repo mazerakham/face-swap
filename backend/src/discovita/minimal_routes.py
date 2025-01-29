@@ -7,8 +7,22 @@ from .icons8.models import Icons8Error, ImageId
 from .config import Settings
 from .s3 import S3Service, FileUploadRequest
 from .models import SwapFaceRequest, SwapFaceResult
+from .openai.client.operations import generate_image
+from httpx import AsyncClient
+from pydantic import BaseModel
 
 router = APIRouter()
+
+class GenerateImageRequest(BaseModel):
+    setting: str
+    outfit: str
+    emotion: str
+    userFeedback: str | None = None
+    previousAugmentedPrompt: str | None = None
+
+class GenerateImageResponse(BaseModel):
+    imageUrl: str
+    augmentedPrompt: str
 
 def get_icons8_client(settings: Settings = Depends(get_settings)) -> Icons8Client:
     """Dependency for Icons8 client instance."""
@@ -52,6 +66,29 @@ async def upload_image(
     )
     url = s3_service.upload(request)
     return {"url": url}
+
+@router.post("/generate", response_model=GenerateImageResponse)
+async def generate_scene(
+    request: GenerateImageRequest,
+    settings: Settings = Depends(get_settings)
+) -> GenerateImageResponse:
+    """Generate an image based on the user's vision."""
+    base_prompt = f"A photo of a person in {request.setting}, wearing {request.outfit}, expressing {request.emotion}"
+    
+    if request.userFeedback and request.previousAugmentedPrompt:
+        # If we have feedback and a previous prompt, use those for refinement
+        prompt = f"{request.previousAugmentedPrompt}\n\nUser Feedback: {request.userFeedback}"
+    else:
+        prompt = base_prompt
+
+    async with AsyncClient(base_url="https://api.openai.com/v1") as client:
+        response = await generate_image(client, settings.openai_api_key, prompt)
+        # Get the first generated image
+        image = response.data[0]
+        return GenerateImageResponse(
+            imageUrl=image.url,
+            augmentedPrompt=image.revised_prompt
+        )
 
 @router.post("/swap", response_model=SwapFaceResult, status_code=status.HTTP_201_CREATED)
 async def swap_faces(

@@ -12,6 +12,7 @@ class Settings:
     aws_secret_access_key: str
     aws_region: str
     s3_bucket: str
+    openai_api_key: str
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -32,11 +33,16 @@ class Settings:
         if not s3_bucket:
             raise ValueError("S3_BUCKET is required")
 
+        openai_api_key = os.getenv("OPENAI_API_KEY")
+        if not openai_api_key:
+            raise ValueError("OPENAI_API_KEY is required")
+
         return cls(
             icons8_api_key=icons8_api_key,
             icons8_base_url="https://api-faceswapper.icons8.com/api/v1",
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key,
             aws_region="us-east-1",
-            s3_bucket=s3_bucket
+            s3_bucket=s3_bucket,
+            openai_api_key=openai_api_key
         )

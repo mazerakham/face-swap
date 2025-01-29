@@ -6,11 +6,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import router
+from .api.router import router
 from .dependencies import get_settings
 from fastapi.staticfiles import StaticFiles
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 def setup_logging() -> None:
     """Configure logging for the application."""
@@ -50,7 +48,8 @@ logger.info("Environment variables loaded", extra={
     "FACESWAP_API_KEY": bool(os.getenv("FACESWAP_API_KEY")),
     "AWS_ACCESS_KEY_ID": bool(os.getenv("AWS_ACCESS_KEY_ID")),
     "AWS_SECRET_ACCESS_KEY": bool(os.getenv("AWS_SECRET_ACCESS_KEY")),
-    "S3_BUCKET": os.getenv("S3_BUCKET")
+    "S3_BUCKET": os.getenv("S3_BUCKET"),
+    "OPENAI_API_KEY": bool(os.getenv("OPENAI_API_KEY"))
 })
 
 app = FastAPI(title="Face Swap API")
@@ -68,7 +67,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router, prefix="/api/v1", dependencies=[Depends(get_settings)])
+app.include_router(router, prefix="/api/v1")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 app.mount("/", StaticFiles(directory=os.path.join(BASE_DIR, "public"), html=True), name="static")

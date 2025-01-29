@@ -67,10 +67,25 @@
     </long-term-memory>
 
     <current-task>
-        I am going to be implementing the front-end for this project.  
+        Read and understand all docs in ./cline/plan for 
+        product specs and project structure before you
+        start.  Ask me clarifying quesitons and update
+        the docs if anything does not make perfect sense
+        or you would recommend a better way to do things.
 
-        1.  Read and understand cline/product_plan.txt.         2.  Read and understand project_structure_requirements.txt.
+        The project is implemented, so we're basically
+        in a debugging stage now.  
 
+        1.  The first screen works.
+        
+        2.  The second screen, accepting an image uplaod
+        of the user's headshot, seems to work.
 
+        3.  The third screen where the user answers questions
+        seems to basically work. 
+
+        4.  The next screen doesn't work - no image is shown,
+        and no image generation API request seems to go out,
+        or if it does, it doesn't work.  Help me troubleshoot.
     </current-task>
 </cline-context>

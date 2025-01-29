@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# Start the Python API server
-cd "$(dirname "$0")/.." && uvicorn face_swap.app:app --reload &
+# Get the project root directory
+PROJECT_ROOT="$(dirname "$0")/.."
+cd "$PROJECT_ROOT"
 
-# Wait a moment for the API to initialize
-sleep 2
+# Build frontend and copy to backend/public
+./scripts/build.sh
 
-# Start the React frontend
-cd frontend && npm start
+# Start the Python API server (which also serves frontend)
+cd backend && uvicorn discovita.app:app --reload

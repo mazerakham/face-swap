@@ -25,28 +25,21 @@ async def main() -> None:
     else:
         print("Running in LIVE mode (using OpenAI API)")
     
-    # Generate an image
+    # Generate initial image
     gen_response = await env_client.generate_image(
         "A photorealistic portrait of a young woman with blonde hair"
     )
     image_url = gen_response.data[0].url
+    revised_prompt = gen_response.data[0].revised_prompt
     print(f"Generated image URL: {image_url}")
+    print(f"Revised prompt: {revised_prompt}")
     
-    # Download the generated image
-    async with httpx.AsyncClient() as http_client:
-        response = await http_client.get(image_url)
-        temp_image = Path("temp_image.png")
-        temp_image.write_bytes(response.content)
-    
-    # Edit the downloaded image
-    edit_response = await env_client.edit_image(
-        "Add a crown of flowers",
-        temp_image
+    # Generate a variation using the revised prompt
+    variation_response = await env_client.generate_image(
+        f"{revised_prompt}, but with a crown of flowers"
     )
-    print(f"Edited image URL: {edit_response.data[0].url}")
-    
-    # Clean up
-    temp_image.unlink()
+    print(f"Variation image URL: {variation_response.data[0].url}")
+    print(f"Variation revised prompt: {variation_response.data[0].revised_prompt}")
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -1,7 +1,6 @@
 """OpenAI DALL-E API client implementation."""
 
 import os
-from pathlib import Path
 from typing import Optional
 from httpx import AsyncClient
 from ..models import ImageResponse, OpenAIMode
@@ -43,12 +42,3 @@ class DallEClient:
     async def generate_image(self, prompt: str) -> ImageResponse:
         """Generate an image from a text prompt."""
         return await self.ops.generate_image(self.client, self.api_key, prompt)
-
-    async def edit_image(
-        self,
-        prompt: str,
-        image: Path,
-        mask: Optional[Path] = None
-    ) -> ImageResponse:
-        """Edit an image given the original image and a prompt."""
-        return await self.ops.edit_image(self.client, self.api_key, prompt, image, mask)

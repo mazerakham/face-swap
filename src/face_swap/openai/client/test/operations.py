@@ -14,18 +14,10 @@ async def generate_image(
     """Return dummy image URL."""
     return ImageResponse(
         created=1234567890,
-        data=[GeneratedImage(url=f"file://{DUMMY_IMAGE_PATH.absolute()}")]
-    )
-
-async def edit_image(
-    client: AsyncClient,
-    api_key: str,
-    prompt: str,
-    image: Path,
-    mask: Path | None = None,
-) -> ImageResponse:
-    """Return dummy image URL."""
-    return ImageResponse(
-        created=1234567890,
-        data=[GeneratedImage(url=f"file://{DUMMY_IMAGE_PATH.absolute()}")]
+        data=[
+            GeneratedImage(
+                url="https://api.openai.com/test/image.png",  # Use https URL for test
+                revised_prompt=f"A highly detailed digital art {prompt}, 8k resolution, cinematic lighting"
+            )
+        ]
     )

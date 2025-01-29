@@ -1,11 +1,10 @@
 """OpenAI DALL-E API operations."""
 
-from pathlib import Path
 from httpx import AsyncClient
 from ..models import (
     ImageGenerationRequest,
-    ImageEditRequest,
     ImageResponse,
+    GeneratedImage,
     OpenAIError,
 )
 
@@ -24,35 +23,18 @@ async def generate_image(
     
     if response.status_code != 200:
         raise OpenAIError(response.status_code, response.text)
-        
-    return ImageResponse.parse_obj(response.json())
-
-async def edit_image(
-    client: AsyncClient,
-    api_key: str,
-    prompt: str,
-    image: Path,
-    mask: Path | None = None,
-) -> ImageResponse:
-    """Edit an image given the original image and a prompt."""
-    request = ImageEditRequest(prompt=prompt)
-    files = {
-        "image": ("image.png", image.read_bytes(), "image/png"),
-        "prompt": (None, request.prompt),
-        "n": (None, str(request.n)),
-        "size": (None, request.size),
-    }
     
-    if mask:
-        files["mask"] = ("mask.png", mask.read_bytes(), "image/png")
+    data = response.json()
+    # Extract revised_prompt from OpenAI's response
+    images = [
+        GeneratedImage(
+            url=img["url"],
+            revised_prompt=img.get("revised_prompt", prompt)  # Fallback to original prompt
+        )
+        for img in data["data"]
+    ]
     
-    response = await client.post(
-        "/images/edits",
-        headers={"Authorization": f"Bearer {api_key}"},
-        files=files,
+    return ImageResponse(
+        created=data["created"],
+        data=images
     )
-    
-    if response.status_code != 200:
-        raise OpenAIError(response.status_code, response.text)
-        
-    return ImageResponse.parse_obj(response.json())

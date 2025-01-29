@@ -58,34 +58,15 @@
             cd frontend && npm start            # Terminal 2
             ```
         </note>
-        
+        <note>
+          src/scripts/dalle/darth_vader_example.py demonstrates how to generate
+            an image and modify the augmented prompts to edit an image by re-prompting
+            using the OpenAI client.  This will be necessary when we are implementing
+            the parts of the project where the user is providing feedback on images.
+        </note>
     </long-term-memory>
 
     <current-task>
-        The entire project works.  However, currently, the 
-        face swap using the src/face_swap/icons8/client.py 
-        client is not working.  
-
-        I spoke with the maintainer of the Icons8 API and have
-        determined that the reason it's not working is that
-        we're sending garbage "landmark" coordinates and need
-        to send accurate ones.  
-
-        The way to do this is to use their auxiliary API
-
-        POST /v1/get_bbox
-
-        which returns a landmarks float array that we can
-        use for the face-swapping request. 
-
-        Implement this.  One note about implementation:
-        The client should "abstract away" this auxiliary
-        API call.  My code should be able to just
-        "do" a face-swap, and the client handles making the
-        auxiliary call to get landmarks before sending
-        the face-swap request with those coordinates. 
-
-        Thus, other than my client, I don't expect
-        any of my other code to change.
+        Read and understand the product plan.  We are now starting step 0.
     </current-task>
 </cline-context>

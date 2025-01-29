@@ -69,19 +69,8 @@
     <current-task>
         I am going to be implementing the front-end for this project.  
 
-        1.  Read and understand cline/product_plan.txt. 
+        1.  Read and understand cline/product_plan.txt.         2.  Read and understand project_structure_requirements.txt.
 
-        2.  Read and understand project_structure_requirements.txt.
 
-        3.  Refactor my files to follow the project structure.  
-        In particular you'll need to move backend files into 
-        a backend directory.  I recommend you use terminal commands.
-        Make sure you update ./scripts/... scripts to respect the
-        new project structure.
-
-        4.  Start a node project - ONLY start it with a welcome
-        screen; don't implement any of the actual product.  
-        This is just a prefactor prior to doing the actual
-        front-end work.
     </current-task>
 </cline-context>

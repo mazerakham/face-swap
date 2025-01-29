@@ -1,121 +1,79 @@
-import React, { useState, useCallback } from 'react';
-import './App.css';
-import { faceSwapClient } from './api/faceSwapClient.tsx';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useWorkflowStore } from './store/workflowStore'
+import { UploadPage } from './pages/UploadPage'
+import { VisionQuestionnairePage } from './pages/VisionQuestionnairePage'
+import { ImageGenerationPage } from './pages/ImageGenerationPage'
+import { ImageRefinementPage } from './pages/ImageRefinementPage'
+import { ResultPage } from './pages/ResultPage'
 
-interface SwapState {
-  sourceUrl?: string;
-  targetUrl?: string;
-  resultUrl?: string;
-  isLoading: boolean;
-  error?: string;
+function ProtectedRoute({ 
+  element: Element, 
+  requiredStep, 
+  currentStep 
+}: { 
+  element: React.ComponentType
+  requiredStep: number
+  currentStep: number 
+}) {
+  if (currentStep < requiredStep) {
+    return <Navigate to="/" replace />
+  }
+  return <Element />
 }
 
 function App() {
-  const [state, setState] = useState<SwapState>({
-    isLoading: false
-  });
-
-  const uploadFile = useCallback(async (file: File): Promise<string> => {
-    return faceSwapClient.uploadFile(file);
-  }, []);
-
-  const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>, type: 'source' | 'target') => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setState(prev => ({ ...prev, error: undefined, isLoading: true }));
-
-    try {
-      const url = await uploadFile(file);
-      setState(prev => ({
-        ...prev,
-        [type === 'source' ? 'sourceUrl' : 'targetUrl']: url,
-        isLoading: false
-      }));
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        error: 'Failed to upload image',
-        isLoading: false
-      }));
-    }
-  }, [uploadFile]);
-
-  const handleSwap = useCallback(async () => {
-    if (!state.sourceUrl || !state.targetUrl) return;
-
-    setState(prev => ({ ...prev, error: undefined, isLoading: true }));
-
-    try {
-      const jobId = await faceSwapClient.initiateFaceSwap(state.sourceUrl, state.targetUrl);
-      const resultUrl = await faceSwapClient.waitForSwapCompletion(jobId);
-      setState(prev => ({
-        ...prev,
-        resultUrl,
-        isLoading: false
-      }));
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        isLoading: false
-      }));
-    }
-  }, [state.sourceUrl, state.targetUrl]);
+  const currentStep = useWorkflowStore(state => state.currentStep)
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Face Swap</h1>
-        
-        <div className="upload-section">
-          <div>
-            <h3>Source Face</h3>
-            <input 
-              type="file" 
-              accept="image/*"
-              onChange={e => handleFileChange(e, 'source')}
-              disabled={state.isLoading}
-            />
-            {state.sourceUrl && (
-              <img src={state.sourceUrl} alt="Source" className="preview" />
-            )}
-          </div>
-
-          <div>
-            <h3>Target Image</h3>
-            <input 
-              type="file" 
-              accept="image/*"
-              onChange={e => handleFileChange(e, 'target')}
-              disabled={state.isLoading}
-            />
-            {state.targetUrl && (
-              <img src={state.targetUrl} alt="Target" className="preview" />
-            )}
-          </div>
-        </div>
-
-        <button 
-          onClick={handleSwap}
-          disabled={!state.sourceUrl || !state.targetUrl || state.isLoading}
-        >
-          {state.isLoading ? 'Processing...' : 'Swap Faces'}
-        </button>
-
-        {state.error && (
-          <div className="error">{state.error}</div>
-        )}
-
-        {state.resultUrl && (
-          <div className="result">
-            <h3>Result</h3>
-            <img src={state.resultUrl} alt="Result" className="preview" />
-          </div>
-        )}
-      </header>
-    </div>
-  );
+    <BrowserRouter>
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+        <Routes>
+          <Route path="/" element={<UploadPage />} />
+          <Route 
+            path="/vision" 
+            element={
+              <ProtectedRoute 
+                element={VisionQuestionnairePage} 
+                requiredStep={1} 
+                currentStep={currentStep} 
+              />
+            } 
+          />
+          <Route 
+            path="/generate" 
+            element={
+              <ProtectedRoute 
+                element={ImageGenerationPage} 
+                requiredStep={2} 
+                currentStep={currentStep} 
+              />
+            } 
+          />
+          <Route 
+            path="/refine" 
+            element={
+              <ProtectedRoute 
+                element={ImageRefinementPage} 
+                requiredStep={3} 
+                currentStep={currentStep} 
+              />
+            } 
+          />
+          <Route 
+            path="/result" 
+            element={
+              <ProtectedRoute 
+                element={ResultPage} 
+                requiredStep={4} 
+                currentStep={currentStep} 
+              />
+            } 
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
+  )
 }
 
-export default App;
+export default App

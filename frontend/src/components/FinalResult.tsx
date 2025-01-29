@@ -24,7 +24,7 @@ const FinalResult: React.FC = () => {
             <h4>Your Photo</h4>
             <img 
               src={state.baseImageUrl} 
-              alt="Your uploaded photo" 
+              alt="You, before the transformation" 
               style={{ width: '200px', height: '200px', objectFit: 'cover' }}
             />
           </div>
@@ -32,7 +32,7 @@ const FinalResult: React.FC = () => {
             <h4>Generated Scene</h4>
             <img 
               src={state.generatedImageUrl} 
-              alt="Generated scene" 
+              alt="Your aspirational setting" 
               style={{ width: '200px', height: '200px', objectFit: 'cover' }}
             />
           </div>

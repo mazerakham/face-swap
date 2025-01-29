@@ -64,9 +64,27 @@
             using the OpenAI client.  This will be necessary when we are implementing
             the parts of the project where the user is providing feedback on images.
         </note>
+        <note>
+            Frontend implementation strategy is documented in cline/product_frontend_implementation_strategy.txt.
+            It outlines a React-based solution with a clear component structure, workflow state management,
+            and integration with existing backend services.
+        </note>
     </long-term-memory>
 
     <current-task>
-        Read and understand the product plan.  We are now starting step 0.
+        Right now there is a rudimentary front-end that does just
+        does a really dinky face-swap.  
+
+        You have my permission to completely start from scratch
+        on the front-end.  Make no attempt to salvage it - though
+        you will need to use the face swap API I built eventually
+        for one of the steps in the product plan.
+
+        Read and understand cline/product_plan.txt
+
+        Write cline/product_frontend_implementation_strategy.txt. 
+        with a high-level plan for doing the React.
+
+        Then implement your plan once I approve it.
     </current-task>
 </cline-context>

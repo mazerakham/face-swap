@@ -1,5 +1,6 @@
 import { useWorkflowStore } from '../store/workflowStore'
 import { useNavigate } from 'react-router-dom'
+import { imageGenerationClient } from '../api/imageGenerationClient'
 
 export function ImageGenerationPage() {
   const { 
@@ -13,10 +14,12 @@ export function ImageGenerationPage() {
 
   const generateImage = async () => {
     try {
-      // TODO: Implement actual API call
-      // For now, just simulate an API call
-      const mockImageUrl = 'https://placeholder.com/800x600'
-      setGeneratedImage(mockImageUrl)
+      const { image_url, revised_prompt } = await imageGenerationClient.generateImage(
+        visionResponses.setting,
+        visionResponses.attire,
+        visionResponses.emotion
+      )
+      setGeneratedImage(image_url, revised_prompt)
       nextStep()
       navigate('/refine')
     } catch (error) {

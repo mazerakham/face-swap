@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useWorkflowStore } from '../store/workflowStore'
 import { useNavigate } from 'react-router-dom'
+import { faceSwapClient } from '../api/faceSwapClient'
 
 export function ResultPage() {
   const { baseImage, generatedImage, previousStep } = useWorkflowStore()
@@ -13,10 +14,9 @@ export function ResultPage() {
       if (!baseImage || !generatedImage) return
 
       try {
-        // TODO: Implement actual face swap API call
-        // For now, just simulate an API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        setFinalImage('https://placeholder.com/800x600')
+        const jobId = await faceSwapClient.initiateFaceSwap(baseImage, generatedImage)
+        const resultUrl = await faceSwapClient.waitForSwapCompletion(jobId)
+        setFinalImage(resultUrl)
       } catch (error) {
         console.error('Failed to perform face swap:', error)
       } finally {

@@ -18,41 +18,15 @@ answers in browser context):
 - What are you wearing?
 - What is the emotion?
 
-Step 3: The "base image" and prompt answers are sent to an
+Step 3: The prompt answers are sent to an
 image generation AI with some prompts; an image is returned
 showing a visualization of the user in the setting described.
 
-- First, the likeness from Step 1 and prompt answers from 
-Step 2 are sent to Dall-E to generate an image which we 
-will call "Target Image Precursor"
-- Then, the Base Image and Target Image Precursor are sent
-to the Icon8 Face Swapper API to generate a "Target Image"
+Step 4: The user is asked to comment and ask for corrections
+on the image generated.  They can iterate on this until
+they are satisfied. 
 
-Step 4: The user is asked to comment on the image generated
-
-
-Generate target image for user
-
-Combine description from base image with the results from part (b) to generate a target image.  
-
-Collect user feedback on target image. Generate a target image based on user feedback - if desired.  
-
-Perform face swap using result of (1a) and (1d)
-
-
-Project Estimate:
-
-
-2 Hours  Fix Icon8 client to use their API to fetch landmarks.  
-
-2 Hours  Integrate with OpenAI Dall-E API and get working API.  (I researched this already and OpenAI's API does support our use-case.)
-
- 2 Hour  Modify app workflow to accept user photo "base image", then prompt for questions.  
-
- 1 Hour  New stage in app in which target image is generated for the user and user is asked to give feedback on target image. 
-
-1 Hour Final stage - integrate the user-generated target image with existing face swap app.  Perform face-swap and provide user with result.  
-
-1 Hour Deployment
-
- 1 Hour  Project overhead
+Step 5: The final image is sent along with the headshot from
+Step 1 to the face-swap API, which swaps the user's face into
+the scene.  This is presented to the user on a final success 
+screen.

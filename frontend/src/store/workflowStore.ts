@@ -10,10 +10,11 @@ interface WorkflowState {
   baseImage: string | null
   visionResponses: VisionResponses
   generatedImage: string | null
+  revisedPrompt: string | null
   currentStep: number
   setBaseImage: (url: string) => void
   setVisionResponse: (key: keyof VisionResponses, value: string) => void
-  setGeneratedImage: (url: string) => void
+  setGeneratedImage: (url: string, revisedPrompt: string) => void
   nextStep: () => void
   previousStep: () => void
 }
@@ -26,6 +27,7 @@ export const useWorkflowStore = create<WorkflowState>((set) => ({
     emotion: ''
   },
   generatedImage: null,
+  revisedPrompt: null,
   currentStep: 0,
 
   setBaseImage: (url) => set({ baseImage: url }),
@@ -38,7 +40,10 @@ export const useWorkflowStore = create<WorkflowState>((set) => ({
       }
     })),
   
-  setGeneratedImage: (url) => set({ generatedImage: url }),
+  setGeneratedImage: (url: string, revisedPrompt: string) => set({ 
+    generatedImage: url,
+    revisedPrompt
+  }),
   
   nextStep: () => set((state) => ({ 
     currentStep: Math.min(state.currentStep + 1, 4)

@@ -5,6 +5,8 @@ import boto3
 from botocore.config import Config
 from .icons8.client import Icons8Client
 from .icons8.models import Icons8Error, ImageId
+from .openai.client.client import OpenAIClient
+from .openai.models import OpenAIError, ImageResponse
 from .config import Settings
 from .models import SwapFaceRequest, SwapFaceResult
 
@@ -15,6 +17,13 @@ def get_icons8_client(settings: Settings = Depends()) -> Icons8Client:
     return Icons8Client(
         api_key=settings.icons8_api_key,
         base_url=settings.icons8_base_url
+    )
+
+def get_openai_client(settings: Settings = Depends()) -> OpenAIClient:
+    """Dependency for OpenAI client instance."""
+    return OpenAIClient(
+        api_key=settings.openai_api_key,
+        base_url=settings.openai_base_url
     )
 
 def get_s3_client(settings: Settings = Depends()):
@@ -57,6 +66,21 @@ async def swap_faces(
         response = await client.swap_faces(source_url=source_url, target_url=target_url)
         return SwapFaceResult.from_icons8_response(response)
     except Icons8Error as e:
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
+
+@router.post("/generate", response_model=ImageResponse)
+async def generate_image(
+    setting: str,
+    attire: str,
+    emotion: str,
+    client: OpenAIClient = Depends(get_openai_client)
+) -> ImageResponse:
+    """Generate an image based on vision details."""
+    prompt = f"A photograph of a person in {setting}. They are wearing {attire} and expressing {emotion}. The image should be cinematic and professional quality."
+    
+    try:
+        return await client.generate_image(prompt=prompt)
+    except OpenAIError as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
 @router.get("/swap/{job_id}", response_model=SwapFaceResult)

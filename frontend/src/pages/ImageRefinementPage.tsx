@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useWorkflowStore } from '../store/workflowStore'
 import { useNavigate } from 'react-router-dom'
+import { imageGenerationClient } from '../api/imageGenerationClient'
 
 export function ImageRefinementPage() {
   const { 
     generatedImage,
+    revisedPrompt,
     setGeneratedImage,
     nextStep,
     previousStep 
@@ -20,11 +22,15 @@ export function ImageRefinementPage() {
 
     setIsGenerating(true)
     try {
-      // TODO: Implement actual API call with feedback
-      // For now, just simulate an API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      const mockNewImageUrl = 'https://placeholder.com/800x600'
-      setGeneratedImage(mockNewImageUrl)
+      if (!revisedPrompt) {
+        throw new Error('No revised prompt available')
+      }
+
+      const { image_url, revised_prompt } = await imageGenerationClient.refineImage(
+        revisedPrompt,
+        feedback
+      )
+      setGeneratedImage(image_url, revised_prompt)
       setFeedback('')
     } catch (error) {
       console.error('Failed to refine image:', error)

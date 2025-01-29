@@ -40,3 +40,7 @@ Response:
     }
   ]
 }
+
+
+A note about editing images:
+There is no meaningful way to "edit an image".  Thus

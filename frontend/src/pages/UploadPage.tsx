@@ -1,5 +1,6 @@
 import { useWorkflowStore } from '../store/workflowStore'
 import { useNavigate } from 'react-router-dom'
+import { uploadClient } from '../api/uploadClient'
 
 export function UploadPage() {
   const { nextStep, setBaseImage } = useWorkflowStore()
@@ -9,21 +10,9 @@ export function UploadPage() {
     const file = event.target.files?.[0]
     if (!file) return
 
-    const formData = new FormData()
-    formData.append('file', file)
-
     try {
-      const response = await fetch('http://localhost:8000/upload', {
-        method: 'POST',
-        body: formData
-      })
-
-      if (!response.ok) {
-        throw new Error('Upload failed')
-      }
-
-      const data = await response.json()
-      setBaseImage(data.url)
+      const url = await uploadClient.uploadFile(file)
+      setBaseImage(url)
       nextStep()
       navigate('/vision')
     } catch (error) {

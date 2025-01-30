@@ -67,73 +67,9 @@
     </long-term-memory>
 
     <current-task>
-        Everything is working LOCALLY, and the app runs 
-        on render at https://face-swap-5vb8.onrender.com,
-
-        Remotely, the image upload works, but then image
-        generation does not work.  Here's the stack trace,
-        which I emphasize is on the production server only;
-        this works locally. 
-
-        See scripts/render_deploy.  These are the scripts
-        used for deployment on render. 
-
-        <stack>
-        Traceback (most recent call last):
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/uvicorn/protocols/http/h11_impl.py", line 403, in run_asgi
-    result = await app(  # type: ignore[func-returns-value]
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
-    return await self.app(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/fastapi/applications.py", line 290, in __call__
-    await super().__call__(scope, receive, send)
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/applications.py", line 122, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 184, in __call__
-    raise exc
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 162, in __call__
-    await self.app(scope, receive, _send)
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 91, in __call__
-    await self.simple_response(scope, receive, send, request_headers=headers)
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 146, in simple_response
-    await self.app(scope, receive, send)
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 79, in __call__
-    raise exc
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 68, in __call__
-    await self.app(scope, receive, sender)
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 20, in __call__
-    raise e
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/fastapi/middleware/asyncexitstack.py", line 17, in __call__
-    await self.app(scope, receive, send)
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/routing.py", line 718, in __call__
-    await route.handle(scope, receive, send)
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/routing.py", line 276, in handle
-    await self.app(scope, receive, send)
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/starlette/routing.py", line 66, in app
-    response = await func(request)
-               ^^^^^^^^^^^^^^^^^^^
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 231, in app
-    solved_result = await solve_dependencies(
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/fastapi/dependencies/utils.py", line 618, in solve_dependencies
-    solved = await solve_generator(
-             ^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/fastapi/dependencies/utils.py", line 543, in solve_generator
-    return await stack.enter_async_context(cm)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.11/contextlib.py", line 650, in enter_async_context
-    result = await _enter(cm)
-             ^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.11/contextlib.py", line 210, in __aenter__
-    return await anext(self.gen)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/render/project/src/backend/src/discovita/api/dependencies.py", line 11, in get_openai_client
-    async with AsyncClient(
-               ^^^^^^^^^^^^
-  File "/opt/render/project/src/backend/.venv/lib/python3.11/site-packages/httpx/_client.py", line 1394, in __init__
-    raise ImportError(
-ImportError: Using http2=True, but the 'h2' package is not installed. Make sure to install httpx using `pip install httpx[http2]`.
-        </stack>
+      Make the icon8 face swap client in the backend log all request 
+      and response JSON bodies so that I can debug those.  Python
+      print statements suffice; I have access to the production
+      console logs.  
     </current-task>
 </cline-context>

@@ -67,51 +67,16 @@
     </long-term-memory>
 
     <current-task>
-        Read and understand all docs in ./cline/plan for 
-        product specs and project structure before you
-        start.  Ask me clarifying quesitons and update
-        the docs if anything does not make perfect sense
-        or you would recommend a better way to do things.
+        Everything is working LOCALLY, and the app runs 
+        on render at https://face-swap-5vb8.onrender.com,
 
-        The project is implemented, so we're basically
-        in a debugging stage now.  
+        BUT, none of the API requests are working. They're
+        being sent to localhost:8000 (initial photo upload results
+        in a network request to http://localhost:8000/api/v1/upload
+        which is wrong).  
 
-        1.  The first screen works.
-        
-        2.  The second screen, accepting an image uplaod
-        of the user's headshot, seems to work.
-
-        3.  The third screen where the user answers questions
-        seems to basically work. 
-
-        4.  The generate image screen works.  An image
-        is generated. 
-
-        5.  The following screen where user can repeatedly
-        give feedback on the image and regenerate is working.
-
-        6. The final screen with the face swap almost, but 
-        doesn't quite work. 
-
-        The following response is being returned by the face
-        swap API to the front-end:
-
-        {
-            "job_id": "679a803ef6ae25000bc7f2ac",
-            "processed": null,
-            "status": 0,
-            "status_name": "queue"
-        }
-
-        What actually has to happen is the backend has to poll this
-        job ID until the status is complete (check the enum
-        for the official name).  Then it should
-        return the image URL to front-end.
-
-        I think you'll need to rewrite the API logic as well
-        as its response object.  It makes no sense for 
-        my API (the discovita API) to directly return the 
-        Icon8 response object with its "job_id".  That is
-        not relevant to front-end. 
+        Help me make it so that the client works on production
+        sending requests to base URL 
+        https://face-swap-5vb8.onrender.com/api/v1
     </current-task>
 </cline-context>

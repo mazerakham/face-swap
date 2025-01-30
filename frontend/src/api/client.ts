@@ -1,6 +1,6 @@
 import { FaceSwapResponse, GenerateImageRequest, ImageGenerationResponse, UploadResponse } from './types'
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1'
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api/v1'
 
 export class ApiClient {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {

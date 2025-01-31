@@ -4,6 +4,8 @@ from enum import IntEnum
 from typing import NewType, Optional, List
 from pydantic import BaseModel, AnyHttpUrl, Field
 
+from .face_selection import BoundingBox
+
 ImageId = NewType("ImageId", str)
 
 class ProcessStatus(IntEnum):
@@ -60,13 +62,30 @@ class FaceSwapResponse(BaseModel):
 
 class Face(BaseModel):
     """Face detection result."""
+    bbox: BoundingBox
+    landmarks: List[float]
+
+    @classmethod
+    def from_icons8_response(cls, data: dict) -> "Face":
+        """Create Face from Icons8 API response."""
+        return cls(
+            bbox=BoundingBox.from_bbox_list(data["bbox"]),
+            landmarks=data["landmarks"]
+        )
+
+class RawFace(BaseModel):
+    """Raw face detection result from Icons8 API."""
     bbox: List[float]
     landmarks: List[float]
 
 class ImageFaces(BaseModel):
     """Face detection results for an image."""
     img_url: AnyHttpUrl
-    faces: List[Face]
+    faces: List[RawFace]
+
+    def get_face_objects(self) -> List[Face]:
+        """Convert raw faces to Face objects."""
+        return [Face.from_icons8_response(face.dict()) for face in self.faces]
 
 class GetBboxRequest(BaseModel):
     """Request model for get_bbox endpoint."""

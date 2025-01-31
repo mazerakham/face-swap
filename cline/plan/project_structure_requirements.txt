@@ -1,6 +1,0 @@
-I want this to be a standard node React project that can easily be
-deployed as an application on render.
-
-See cline/plan/directory_structure_plan.txt for the expected
-directory structure of the project.
-

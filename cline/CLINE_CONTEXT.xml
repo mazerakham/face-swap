@@ -67,9 +67,15 @@
     </long-term-memory>
 
     <current-task>
-      Make the icon8 face swap client in the backend log all request 
-      and response JSON bodies so that I can debug those.  Python
-      print statements suffice; I have access to the production
-      console logs.  
+      Read all docs in cline/plan/v1 to get project context.  V1
+      is complete.
+
+      Then read cline/plan/v2/image_generator_v2_plan.txt. Write
+      cline/plan/v2/implementatin_strategy.txt.  Get my approval.  
+      Then proceed to implement Part 1, 
+      "Target images with multiple faces."
+
+    icons8 client has just been modified to do face-selection
+    based on bounding box area.
     </current-task>
 </cline-context>

@@ -1,12 +1,58 @@
-"""OpenAI DALL-E API operations."""
+"""OpenAI API operations."""
 
-from httpx import AsyncClient
+from typing import List, Dict, Any
+from openai import AsyncOpenAI as AsyncClient
+from pydantic import AnyHttpUrl
 from ..models import (
     ImageGenerationRequest,
     ImageResponse,
     GeneratedImage,
     OpenAIError,
+    VisionRequest,
+    CompletionRequest,
+    ChatMessage,
+    ChatResponse
 )
+
+async def describe_image_with_vision(
+    client: AsyncClient,
+    image_url: AnyHttpUrl,
+    prompt: str
+) -> str:
+    """Get a description of an image using GPT-4 Vision."""
+    request = VisionRequest(
+        messages=[ChatMessage(
+            role="user",
+            content=[
+                {
+                    "type": "text",
+                    "text": prompt
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {"url": str(image_url)}
+                }
+            ]
+        )]
+    )
+    
+    response = await client.chat.completions.create(**request.dict())
+    return ChatResponse.from_openai_response(response).content
+
+async def get_completion(
+    client: AsyncClient,
+    prompt: str
+) -> str:
+    """Get a completion from GPT-4o."""
+    request = CompletionRequest(
+        messages=[ChatMessage(
+            role="user",
+            content=prompt
+        )]
+    )
+    
+    response = await client.chat.completions.create(**request.dict())
+    return ChatResponse.from_openai_response(response).content
 
 async def generate_image(
     client: AsyncClient,
@@ -22,30 +68,15 @@ async def generate_image(
         quality="standard"
     )
     
-    response = await client.post(
-        "/images/generations",
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        },
-        json=request.dict(exclude_none=True),
-        timeout=60.0  # DALL-E 3 can take longer to generate
-    )
-    
-    if response.status_code != 200:
-        raise OpenAIError(response.status_code, response.text)
-    
-    data = response.json()
+    response = await client.images.generate(**request.dict(exclude_none=True))
     # Extract revised_prompt from OpenAI's response
-    images = [
-        GeneratedImage(
-            url=img["url"],
-            revised_prompt=img.get("revised_prompt", prompt)  # Fallback to original prompt
-        )
-        for img in data["data"]
-    ]
-    
     return ImageResponse(
-        created=data["created"],
-        data=images
+        created=int(response.created),
+        data=[
+            GeneratedImage(
+                url=img.url,
+                revised_prompt=getattr(img, "revised_prompt", prompt)  # Fallback to original prompt
+            )
+            for img in response.data
+        ]
     )

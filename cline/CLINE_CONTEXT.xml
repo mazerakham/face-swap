@@ -70,12 +70,13 @@
       Read all docs in cline/plan/v1 to get project context.  V1
       is complete.
 
-      Then read cline/plan/v2/image_generator_v2_plan.txt. Write
-      cline/plan/v2/implementatin_strategy.txt.  Get my approval.  
-      Then proceed to implement Part 1, 
-      "Target images with multiple faces."
+      Read all docs in cline/plan/v2 to learn about the current 
+      version, v2, that we're working on.
 
-    icons8 client has just been modified to do face-selection
-    based on bounding box area.
+      Part 1 of the implementation plan is already done.
+
+      Proceed to do Part 2.  
+      cline/open_ai_docs/dall_e_describe_image.txt
+      should be useful.
     </current-task>
 </cline-context>

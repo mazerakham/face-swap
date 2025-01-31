@@ -12,7 +12,9 @@ from ..models import (
     Icons8Error,
     GetBboxRequest,
     GetBboxResponse,
+    Face,
 )
+from ..face_selection import select_primary_face
 from .logging import log_response
 
 async def get_landmarks(client: AsyncClient, api_key: str, urls: List[str]) -> GetBboxResponse:
@@ -47,12 +49,27 @@ async def swap_faces(client: AsyncClient, api_key: str, source_url: str, target_
     source_faces = next(img for img in landmarks_response.__root__ if img.img_url == source_http_url)
     target_faces = next(img for img in landmarks_response.__root__ if img.img_url == target_http_url)
     
+    assert source_faces.faces, "No faces detected in source image"
+    assert target_faces.faces, "No faces detected in target image"
+    
+    # Convert raw faces to Face objects for proper bbox handling
+    source_face_objs = source_faces.get_face_objects()
+    target_face_objs = target_faces.get_face_objects()
+    
+    # Select primary faces based on size
+    primary_source_face = select_primary_face([face.bbox for face in source_face_objs])
+    primary_target_face = select_primary_face([face.bbox for face in target_face_objs])
+    
+    # Find corresponding Face objects
+    source_face = next(face for face in source_face_objs if face.bbox == primary_source_face)
+    target_face = next(face for face in target_face_objs if face.bbox == primary_target_face)
+    
     request = FaceSwapRequest(
         target_url=target_http_url,
         face_tasks=[FaceTask(
             source_url=source_http_url,
-            source_landmarks=source_faces.faces[0].landmarks,
-            target_landmarks=target_faces.faces[0].landmarks
+            source_landmarks=source_face.landmarks,
+            target_landmarks=target_face.landmarks
         )]
     )
     

@@ -1,3 +1,7 @@
+If you notice that the project does not follow this general
+outline, please let me know so we can adjust the project or
+this doc.
+
 - cline
 - - ... Docs related to providing you with context ...
 - scripts

@@ -1,4 +1,11 @@
-import { FaceSwapResponse, GenerateImageRequest, ImageGenerationResponse, UploadResponse } from './types'
+import { 
+  FaceSwapResponse, 
+  GenerateImageRequest, 
+  ImageGenerationResponse, 
+  UploadResponse,
+  DescribeImageRequest,
+  DescribeImageResponse
+} from './types'
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api/v1'
 
@@ -37,6 +44,14 @@ export class ApiClient {
 
   async generateImage(request: GenerateImageRequest): Promise<ImageGenerationResponse> {
     return this.request<ImageGenerationResponse>('/generate', {
+      method: 'POST',
+      body: JSON.stringify(request),
+    })
+  }
+
+  async describeImage(imageUrl: string): Promise<DescribeImageResponse> {
+    const request: DescribeImageRequest = { image_url: imageUrl }
+    return this.request<DescribeImageResponse>('/describe', {
       method: 'POST',
       body: JSON.stringify(request),
     })

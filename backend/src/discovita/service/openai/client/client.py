@@ -2,7 +2,7 @@
 
 import os
 from typing import Optional
-from openai import AsyncClient
+from openai import AsyncOpenAI
 from pydantic import AnyHttpUrl
 from ..models import ImageResponse, OpenAIMode
 from . import operations
@@ -34,10 +34,11 @@ class OpenAIClient:
             
         self.base_url = base_url
         self.api_key = api_key
-        self.client = AsyncClient(
+        self.client = AsyncOpenAI(
             api_key=api_key,
             base_url=base_url,
-            timeout=60.0
+            timeout=60.0,
+            max_retries=3
         )
         self.ops = test_operations if self.mode == OpenAIMode.TEST else operations
     

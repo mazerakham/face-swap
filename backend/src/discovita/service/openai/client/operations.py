@@ -1,7 +1,7 @@
 """OpenAI API operations."""
 
 from typing import List, Dict, Any
-from openai import AsyncOpenAI as AsyncClient
+from openai import AsyncOpenAI
 from pydantic import AnyHttpUrl
 from ..models import (
     ImageGenerationRequest,
@@ -15,7 +15,7 @@ from ..models import (
 )
 
 async def describe_image_with_vision(
-    client: AsyncClient,
+    client: AsyncOpenAI,
     image_url: AnyHttpUrl,
     prompt: str
 ) -> str:
@@ -40,7 +40,7 @@ async def describe_image_with_vision(
     return ChatResponse.from_openai_response(response).content
 
 async def get_completion(
-    client: AsyncClient,
+    client: AsyncOpenAI,
     prompt: str
 ) -> str:
     """Get a completion from GPT-4o."""
@@ -55,7 +55,7 @@ async def get_completion(
     return ChatResponse.from_openai_response(response).content
 
 async def generate_image(
-    client: AsyncClient,
+    client: AsyncOpenAI,
     api_key: str,
     prompt: str,
 ) -> ImageResponse:
@@ -74,7 +74,7 @@ async def generate_image(
         created=int(response.created),
         data=[
             GeneratedImage(
-                url=img.url,
+                url=str(img.url),  # Ensure url is str
                 revised_prompt=getattr(img, "revised_prompt", prompt)  # Fallback to original prompt
             )
             for img in response.data

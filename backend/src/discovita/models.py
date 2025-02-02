@@ -1,8 +1,16 @@
 """API-specific data models."""
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, AnyHttpUrl
 from enum import IntEnum
 from typing import Optional
+
+class DescribeImageRequest(BaseModel):
+    """Request to get a clean description of an image."""
+    image_url: AnyHttpUrl
+
+class DescribeImageResponse(BaseModel):
+    """Response containing clean description of an image."""
+    description: str
 
 class GenerateImageRequest(BaseModel):
     setting: str
@@ -10,6 +18,7 @@ class GenerateImageRequest(BaseModel):
     emotion: str
     userFeedback: str | None = None
     previousAugmentedPrompt: str | None = None
+    userDescription: str | None = None  # Clean description of user's headshot
 
 class GenerateImageResponse(BaseModel):
     imageUrl: str

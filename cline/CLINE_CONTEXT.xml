@@ -78,5 +78,12 @@
       Proceed to do Part 2.  
       cline/open_ai_docs/dall_e_describe_image.txt
       should be useful.
+
+      You're almost done.  Review src/discovita/service/openai/client
+      and you should find it's mostly implemented. 
+
+      cd backend && pyright src/discovita/service/openai/
+
+      reveals some compiler errors to work through. 
     </current-task>
 </cline-context>

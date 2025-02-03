@@ -1,31 +1,26 @@
 """Image generation route handlers."""
 
 from fastapi import APIRouter, Depends
-from httpx import AsyncClient
-from ...config import Settings
-from ...dependencies import get_settings
 from ...models import GenerateImageRequest, GenerateImageResponse
-from ...service.openai.client.operations import generate_image
-from ..dependencies import get_openai_client
+from ...service.openai.image_generation import ImageGenerationService
+from ..dependencies import get_image_generation_service
 
 router = APIRouter()
 
 @router.post("/generate", response_model=GenerateImageResponse)
 async def generate_scene(
     request: GenerateImageRequest,
-    settings: Settings = Depends(get_settings),
-    client: AsyncClient = Depends(get_openai_client)
+    service: ImageGenerationService = Depends(get_image_generation_service)
 ) -> GenerateImageResponse:
     """Generate an image based on the user's vision."""
-    base_prompt = f"A photo of a person in {request.setting}, wearing {request.outfit}, expressing {request.emotion}"
-    
-    if request.userFeedback and request.previousAugmentedPrompt:
-        # If we have feedback and a previous prompt, use those for refinement
-        prompt = f"{request.previousAugmentedPrompt}\n\nUser Feedback: {request.userFeedback}"
-    else:
-        prompt = base_prompt
-
-    response = await generate_image(client, settings.openai_api_key, prompt)
+    response = await service.generate_scene(
+        setting=request.setting,
+        outfit=request.outfit,
+        emotion=request.emotion,
+        user_description=request.userDescription,
+        user_feedback=request.userFeedback,
+        previous_augmented_prompt=request.previousAugmentedPrompt
+    )
     # Get the first generated image
     image = response.data[0]
     return GenerateImageResponse(

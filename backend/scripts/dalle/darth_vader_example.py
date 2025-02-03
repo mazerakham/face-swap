@@ -2,7 +2,7 @@
 
 import asyncio
 import os
-from face_swap.openai.client import DallEClient
+from face_swap.openai.client import OpenAIClient
 
 async def main() -> None:
     """Generate Darth Vader images using augmented prompts."""
@@ -10,7 +10,7 @@ async def main() -> None:
     if not api_key:
         raise ValueError("OPENAI_API_KEY environment variable is required")
     
-    client = DallEClient(api_key, test_mode=False)  # Explicitly set live mode
+    client = OpenAIClient(api_key, test_mode=False)  # Explicitly set live mode
     
     # Generate initial Darth Vader image
     initial_response = await client.generate_image(

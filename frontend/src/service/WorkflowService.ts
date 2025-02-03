@@ -13,6 +13,7 @@ export enum WorkflowStep {
 export interface WorkflowState {
   currentStep: WorkflowStep
   baseImageUrl?: string
+  userDescription?: string
   setting?: string
   outfit?: string
   emotion?: string
@@ -46,9 +47,12 @@ export class WorkflowService {
   }
 
   async uploadBaseImage(file: File): Promise<void> {
-    const response = await apiClient.uploadImage(file)
+    const uploadResponse = await apiClient.uploadImage(file)
+    const describeResponse = await apiClient.describeImage(uploadResponse.url)
+    
     this.setState({
-      baseImageUrl: response.url,
+      baseImageUrl: uploadResponse.url,
+      userDescription: describeResponse.description,
       currentStep: WorkflowStep.Questions,
     })
   }
@@ -69,6 +73,7 @@ export class WorkflowService {
       emotion: this.state.emotion!,
       userFeedback,
       previousAugmentedPrompt: this.state.augmentedPrompt,
+      userDescription: this.state.userDescription,
     }
 
     const response = await apiClient.generateImage(request)

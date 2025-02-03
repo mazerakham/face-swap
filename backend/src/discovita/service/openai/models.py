@@ -1,7 +1,7 @@
-"""Data models for OpenAI DALL-E API interactions."""
+"""Data models for OpenAI API interactions."""
 
 from enum import Enum
-from typing import List
+from typing import List, Union, Dict, Any
 from pydantic import BaseModel, Field
 
 class OpenAIMode(str, Enum):
@@ -33,3 +33,31 @@ class OpenAIError(Exception):
         self.status_code = status_code
         self.detail = detail
         super().__init__(f"OpenAI API error: {detail}")
+
+class ChatMessage(BaseModel):
+    """Chat message model."""
+    role: str
+    content: Union[str, List[Dict[str, Any]]]
+
+class ChatRequest(BaseModel):
+    """Base model for chat completion requests."""
+    model: str
+    messages: List[ChatMessage]
+    max_tokens: int = 300
+
+class ChatResponse(BaseModel):
+    """Base model for chat completion responses."""
+    content: str
+
+    @classmethod
+    def from_openai_response(cls, response: Any) -> "ChatResponse":
+        """Create ChatResponse from OpenAI API response."""
+        return cls(content=response.choices[0].message.content)
+
+class VisionRequest(ChatRequest):
+    """Request model for GPT-4 Vision."""
+    model: str = "gpt-4o"
+
+class CompletionRequest(ChatRequest):
+    """Request model for GPT-4o text completion."""
+    model: str = "gpt-4o"

@@ -4,7 +4,7 @@ import asyncio
 import os
 import httpx
 from pathlib import Path
-from face_swap.openai.client import DallEClient
+from face_swap.openai.client import OpenAIClient
 from face_swap.openai.models import OpenAIMode
 
 async def main() -> None:
@@ -12,11 +12,11 @@ async def main() -> None:
     api_key = os.getenv("OPENAI_API_KEY")
     
     # Mode from constructor (takes precedence)
-    explicit_test_client = DallEClient(api_key=None, test_mode=True)
+    explicit_test_client = OpenAIClient(api_key=None, test_mode=True)
     print(f"Explicit test mode client mode: {explicit_test_client.mode}")
     
     # Mode from environment (if not specified in constructor)
-    env_client = DallEClient(api_key)
+    env_client = OpenAIClient(api_key)
     print(f"Environment-based client mode: {env_client.mode}")
     
     # Use the environment-based client for operations

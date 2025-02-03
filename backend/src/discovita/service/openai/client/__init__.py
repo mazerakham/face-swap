@@ -1,5 +1,5 @@
 """OpenAI DALL-E client package."""
 
-from .client import DallEClient
+from .client import OpenAIClient
 
-__all__ = ["DallEClient"]
+__all__ = ["OpenAIClient"]

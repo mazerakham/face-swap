@@ -19,13 +19,15 @@ class ImageDescriptionService:
         # Step 1: Get initial description
         initial_description = await self.client.describe_image_with_vision(
             image_url,
-            "Describe this person's physical appearance in detail. Focus on their facial features, hair, and any distinctive characteristics."
+            "Describe this person's physical appearance in detail. Focus on "+
+            "their facial features, hair, and any distinctive characteristics.  In particular, race and gender can and should be included in the description."
         )
         
         # Step 2: Clean up description
         clean_description = await self.client.get_completion(
             f"""Clean up this description of a person by removing any irrelevant details about pose, background, or setting. 
             Keep only physical characteristics of the person that would be relevant for generating a new image of them.
+            In particular, race and gender description should be retained.
             
             Description: {initial_description}"""
         )

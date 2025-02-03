@@ -15,7 +15,8 @@ async def get_openai_client(
     """Get OpenAI client."""
     return OpenAIClient(
         api_key=settings.openai_api_key,
-        base_url="https://api.openai.com/v1"
+        base_url="https://api.openai.com/v1",
+        test_mode=False
     )
 
 async def get_image_description_service(

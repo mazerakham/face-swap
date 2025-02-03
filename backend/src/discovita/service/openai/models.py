@@ -56,7 +56,7 @@ class ChatResponse(BaseModel):
 
 class VisionRequest(ChatRequest):
     """Request model for GPT-4 Vision."""
-    model: str = "gpt-4-vision-preview"
+    model: str = "gpt-4o"
 
 class CompletionRequest(ChatRequest):
     """Request model for GPT-4o text completion."""

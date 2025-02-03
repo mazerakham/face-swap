@@ -79,11 +79,16 @@
       cline/open_ai_docs/dall_e_describe_image.txt
       should be useful.
 
-      You're almost done.  Review src/discovita/service/openai/client
-      and you should find it's mostly implemented. 
+      src/discovita/service/openai/client
+      
+      already has the new functions implemented, and
 
-      cd backend && pyright src/discovita/service/openai/
+      backend/discovita/api/routes I believe has the 
+      API's implemented.  
 
-      reveals some compiler errors to work through. 
+      Right now there is a bug whereby the backend is using
+      .../openai/client/test/operations.py rather than
+      the /openai/client/operations.py with the actual
+      implementation of the client. Please fix.
     </current-task>
 </cline-context>

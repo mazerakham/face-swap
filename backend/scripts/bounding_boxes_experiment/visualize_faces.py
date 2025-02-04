@@ -28,11 +28,11 @@ def draw_bounding_boxes(image: Image.Image, faces: list) -> Image.Image:
     # Draw each face's bounding box
     for face, color in zip(faces, COLORS):
         bbox = face["bbox"]
-        x, y, width, height, _ = bbox  # Ignore confidence score
+        x_min, y_min, x_max, y_max, _ = bbox  # Ignore confidence score
         
         # Draw rectangle
         draw.rectangle(
-            [x, y, x + width, y + height],
+            [x_min, y_min, x_max, y_max],
             fill=color,
             outline=color[:3] + (255,)  # Solid outline
         )

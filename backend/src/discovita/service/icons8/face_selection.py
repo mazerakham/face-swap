@@ -4,12 +4,22 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class BoundingBox:
-    """Represents a face bounding box with x, y coordinates, dimensions, and confidence."""
-    x: int
-    y: int
-    width: int
-    height: int
+    """Represents a face bounding box with min/max coordinates and confidence."""
+    x_min: int
+    y_min: int
+    x_max: int
+    y_max: int
     confidence: float
+
+    @property
+    def width(self) -> int:
+        """Calculate width from x coordinates."""
+        return self.x_max - self.x_min
+
+    @property
+    def height(self) -> int:
+        """Calculate height from y coordinates."""
+        return self.y_max - self.y_min
 
     @property
     def relevance(self) -> float:
@@ -18,13 +28,13 @@ class BoundingBox:
 
     @classmethod
     def from_bbox_list(cls, bbox: list[float]) -> "BoundingBox":
-        """Convert Icons8 bbox format [x, y, width, height, confidence] to BoundingBox."""
-        x, y, width, height, confidence, *_ = bbox  # Ignore any additional values
+        """Convert Icons8 bbox format [x_min, y_min, x_max, y_max, confidence] to BoundingBox."""
+        x_min, y_min, x_max, y_max, confidence, *_ = bbox  # Ignore any additional values
         return cls(
-            x=int(x),
-            y=int(y),
-            width=int(width),
-            height=int(height),
+            x_min=int(x_min),
+            y_min=int(y_min),
+            x_max=int(x_max),
+            y_max=int(y_max),
             confidence=float(confidence)
         )
 

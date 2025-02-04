@@ -26,7 +26,13 @@ class ImageGenerationService:
         
         if user_feedback and previous_augmented_prompt:
             # If we have feedback and a previous prompt, use those for refinement
-            prompt = f"{previous_augmented_prompt}\n\nUser Feedback: {user_feedback}"
+            # Emphasize the user feedback by putting it first and making it a requirement
+            prompt = f"""IMPORTANT REQUIREMENTS FROM USER: {user_feedback}
+
+Based on these requirements, generate a new version of this scene:
+{previous_augmented_prompt}
+
+The above description should be modified to strongly emphasize and incorporate the user's requirements."""
         else:
             prompt = base_prompt
 

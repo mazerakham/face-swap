@@ -1,13 +1,18 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useWorkflow } from '../context/WorkflowContext'
 import LoadingSpinner from './LoadingSpinner'
 
 const ImageGeneration: React.FC = () => {
   const { state, generateImage } = useWorkflow()
 
+  const hasStartedGeneration = useRef(false)
+
   useEffect(() => {
-    generateImage()
-  }, [generateImage])
+    if (!hasStartedGeneration.current && !state.isLoading && !state.error) {
+      hasStartedGeneration.current = true
+      generateImage()
+    }
+  }, [generateImage, state.isLoading, state.error])
 
   return (
     <div>

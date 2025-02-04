@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { workflowService, WorkflowState, WorkflowStep } from '../service/WorkflowService'
 
 interface WorkflowContextType {
@@ -29,13 +29,39 @@ export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return () => workflowService.unsubscribe(updateState)
   }, [])
 
+  const uploadBaseImage = useCallback(
+    (file: File) => workflowService.uploadBaseImage(file),
+    []
+  )
+
+  const generateImage = useCallback(
+    (userFeedback?: string) => workflowService.generateImage(userFeedback),
+    []
+  )
+
+  const generateFinalResult = useCallback(
+    () => workflowService.generateFinalResult(),
+    []
+  )
+
+  const setQuestionResponses = useCallback(
+    (setting: string, outfit: string, emotion: string) => 
+      workflowService.setQuestionResponses(setting, outfit, emotion),
+    []
+  )
+
+  const startWorkflow = useCallback(
+    () => workflowService.startWorkflow(),
+    []
+  )
+
   const value = {
     state,
-    uploadBaseImage: workflowService.uploadBaseImage.bind(workflowService),
-    generateImage: workflowService.generateImage.bind(workflowService),
-    generateFinalResult: workflowService.generateFinalResult.bind(workflowService),
-    setQuestionResponses: workflowService.setQuestionResponses.bind(workflowService),
-    startWorkflow: workflowService.startWorkflow.bind(workflowService),
+    uploadBaseImage,
+    generateImage,
+    generateFinalResult,
+    setQuestionResponses,
+    startWorkflow,
   }
 
   return (

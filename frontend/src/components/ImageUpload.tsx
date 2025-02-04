@@ -1,14 +1,16 @@
 import React, { useRef } from 'react'
-import { workflowService } from '../service/WorkflowService'
+import { useWorkflow } from '../context/WorkflowContext'
+import LoadingSpinner from './LoadingSpinner'
 
 const ImageUpload: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { state, uploadBaseImage } = useWorkflow()
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
 
-    await workflowService.uploadBaseImage(file)
+    await uploadBaseImage(file)
   }
 
   const handleClick = () => {
@@ -28,9 +30,17 @@ const ImageUpload: React.FC = () => {
         style={{ display: 'none' }}
       />
       
-      <button onClick={handleClick}>
-        Choose Photo
+      <button onClick={handleClick} disabled={state.isLoading}>
+        {state.isLoading ? 'Uploading...' : 'Choose Photo'}
       </button>
+
+      {state.isLoading && <LoadingSpinner />}
+
+      {state.error && (
+        <div style={{ color: 'red', marginTop: '10px' }}>
+          {state.error}
+        </div>
+      )}
     </div>
   )
 }

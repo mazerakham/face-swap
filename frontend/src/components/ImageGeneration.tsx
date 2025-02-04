@@ -1,26 +1,26 @@
 import React, { useEffect } from 'react'
-import { workflowService } from '../service/WorkflowService'
+import { useWorkflow } from '../context/WorkflowContext'
+import LoadingSpinner from './LoadingSpinner'
 
 const ImageGeneration: React.FC = () => {
-  useEffect(() => {
-    const generateInitialImage = async () => {
-      try {
-        await workflowService.generateImage()
-      } catch (error) {
-        console.error('Failed to generate initial image:', error)
-      }
-    }
+  const { state, generateImage } = useWorkflow()
 
-    generateInitialImage()
-  }, []) // Run once on mount
+  useEffect(() => {
+    generateImage()
+  }, [generateImage])
 
   return (
     <div>
       <h2>Generating Your Vision</h2>
       <p>Please wait while we create your personalized vision board...</p>
-      <div>
-        {/* Add a loading spinner or animation here if desired */}
-      </div>
+      
+      {state.isLoading && <LoadingSpinner />}
+
+      {state.error && (
+        <div style={{ color: 'red', marginTop: '10px' }}>
+          {state.error}
+        </div>
+      )}
     </div>
   )
 }

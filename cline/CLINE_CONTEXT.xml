@@ -66,7 +66,7 @@
         </note>
     </long-term-memory>
 
-    <current-task>
+    <previous-task>
       Review all docs in cline/plan/v3 for context.  Actually
       read and understand them.
 
@@ -81,5 +81,13 @@
       Right now, there is no indication to the user that something
       went wrong, so they just sit there.  If there is a server
       error message, it can be displayed. 
+    </previous-task>
+    <current-task>
+      Review all docs in cline/plan/v3 for context.  Actually
+      read and understand them.
+      
+      Last task was successful, except one loading spinner was 
+      missed on the page where the user submits their feedback
+      and requests a regeneration of the target image.
     </current-task>
 </cline-context>

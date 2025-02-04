@@ -16,7 +16,7 @@ class Icons8Client:
         self.api_key = api_key
         self.client = AsyncClient(
             base_url=base_url,
-            timeout=60.0
+            timeout=90.0
         )
     
     async def get_landmarks(self, urls: List[str]) -> GetBboxResponse:

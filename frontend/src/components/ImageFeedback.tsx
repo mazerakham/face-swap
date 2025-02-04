@@ -1,20 +1,27 @@
 import React, { useState } from 'react'
 import { workflowService } from '../service/WorkflowService'
+import LoadingSpinner from './LoadingSpinner'
 
 const ImageFeedback: React.FC = () => {
   const [feedback, setFeedback] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSwapping, setIsSwapping] = useState(false)
   const state = workflowService.getState()
   const imageHistory = workflowService.getImageHistory()
 
   const handleSubmitFeedback = async () => {
     if (feedback.trim()) {
+      setIsLoading(true)
       await workflowService.generateImage(feedback)
       setFeedback('')
+      setIsLoading(false)
     }
   }
 
-  const handleFinalize = () => {
-    workflowService.generateFinalResult()
+  const handleFinalize = async () => {
+    setIsSwapping(true)
+    await workflowService.generateFinalResult()
+    setIsSwapping(false)
   }
 
   return (
@@ -53,11 +60,11 @@ const ImageFeedback: React.FC = () => {
         />
         
         <div>
-          <button onClick={handleSubmitFeedback}>
-            Generate New Version
+          <button onClick={handleSubmitFeedback} disabled={isLoading}>
+            {isLoading ? <LoadingSpinner /> : 'Generate New Version'}
           </button>
-          <button onClick={handleFinalize}>
-            Finalize Image
+          <button onClick={handleFinalize} disabled={isSwapping}>
+            {isSwapping ? <LoadingSpinner /> : 'Finalize Image'}
           </button>
         </div>
       </div>

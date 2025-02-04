@@ -20,6 +20,8 @@ export interface WorkflowState {
   generatedImageUrl?: string
   augmentedPrompt?: string
   finalResultUrl?: string
+  isLoading: boolean
+  error?: string
 }
 
 export interface ImageCache {
@@ -30,9 +32,19 @@ export interface ImageCache {
 export class WorkflowService {
   private state: WorkflowState = {
     currentStep: WorkflowStep.Welcome,
+    isLoading: false,
   }
 
   private imageHistory: ImageCache[] = []
+  private subscribers: Array<() => void> = []
+
+  subscribe(callback: () => void): void {
+    this.subscribers.push(callback)
+  }
+
+  unsubscribe(callback: () => void): void {
+    this.subscribers = this.subscribers.filter(sub => sub !== callback)
+  }
 
   getState(): WorkflowState {
     return { ...this.state }
@@ -40,6 +52,7 @@ export class WorkflowService {
 
   setState(newState: Partial<WorkflowState>): void {
     this.state = { ...this.state, ...newState }
+    this.subscribers.forEach(callback => callback())
   }
 
   startWorkflow(): void {
@@ -47,14 +60,23 @@ export class WorkflowService {
   }
 
   async uploadBaseImage(file: File): Promise<void> {
-    const uploadResponse = await apiClient.uploadImage(file)
-    const describeResponse = await apiClient.describeImage(uploadResponse.url)
-    
-    this.setState({
-      baseImageUrl: uploadResponse.url,
-      userDescription: describeResponse.description,
-      currentStep: WorkflowStep.Questions,
-    })
+    this.setState({ isLoading: true, error: undefined })
+    try {
+      const uploadResponse = await apiClient.uploadImage(file)
+      const describeResponse = await apiClient.describeImage(uploadResponse.url)
+      
+      this.setState({
+        baseImageUrl: uploadResponse.url,
+        userDescription: describeResponse.description,
+        currentStep: WorkflowStep.Questions,
+        isLoading: false,
+      })
+    } catch (error) {
+      this.setState({ 
+        error: error instanceof Error ? error.message : 'Failed to upload image',
+        isLoading: false 
+      })
+    }
   }
 
   setQuestionResponses(setting: string, outfit: string, emotion: string): void {
@@ -67,39 +89,57 @@ export class WorkflowService {
   }
 
   async generateImage(userFeedback?: string): Promise<void> {
-    const request: GenerateImageRequest = {
-      setting: this.state.setting!,
-      outfit: this.state.outfit!,
-      emotion: this.state.emotion!,
-      userFeedback,
-      previousAugmentedPrompt: this.state.augmentedPrompt,
-      userDescription: this.state.userDescription,
+    this.setState({ isLoading: true, error: undefined })
+    try {
+      const request: GenerateImageRequest = {
+        setting: this.state.setting!,
+        outfit: this.state.outfit!,
+        emotion: this.state.emotion!,
+        userFeedback,
+        previousAugmentedPrompt: this.state.augmentedPrompt,
+        userDescription: this.state.userDescription,
+      }
+
+      const response = await apiClient.generateImage(request)
+      
+      this.imageHistory.push({
+        imageUrl: response.imageUrl,
+        augmentedPrompt: response.augmentedPrompt,
+      })
+
+      this.setState({
+        generatedImageUrl: response.imageUrl,
+        augmentedPrompt: response.augmentedPrompt,
+        currentStep: WorkflowStep.ImageFeedback,
+        isLoading: false,
+      })
+    } catch (error) {
+      this.setState({ 
+        error: error instanceof Error ? error.message : 'Failed to generate image',
+        isLoading: false 
+      })
     }
-
-    const response = await apiClient.generateImage(request)
-    
-    this.imageHistory.push({
-      imageUrl: response.imageUrl,
-      augmentedPrompt: response.augmentedPrompt,
-    })
-
-    this.setState({
-      generatedImageUrl: response.imageUrl,
-      augmentedPrompt: response.augmentedPrompt,
-      currentStep: WorkflowStep.ImageFeedback,
-    })
   }
 
   async generateFinalResult(): Promise<void> {
-    const response = await apiClient.swapFaces({
-      baseImageUrl: this.state.baseImageUrl!,
-      targetImageUrl: this.state.generatedImageUrl!,
-    })
+    this.setState({ isLoading: true, error: undefined })
+    try {
+      const response = await apiClient.swapFaces({
+        baseImageUrl: this.state.baseImageUrl!,
+        targetImageUrl: this.state.generatedImageUrl!,
+      })
 
-    this.setState({
-      finalResultUrl: response.url,
-      currentStep: WorkflowStep.FinalResult,
-    })
+      this.setState({
+        finalResultUrl: response.url,
+        currentStep: WorkflowStep.FinalResult,
+        isLoading: false,
+      })
+    } catch (error) {
+      this.setState({ 
+        error: error instanceof Error ? error.message : 'Failed to swap faces',
+        isLoading: false 
+      })
+    }
   }
 
   getImageHistory(): ImageCache[] {

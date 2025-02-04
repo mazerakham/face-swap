@@ -1,24 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import WelcomeScreen from './components/WelcomeScreen'
 import ImageUpload from './components/ImageUpload'
 import Questions from './components/Questions'
 import ImageFeedback from './components/ImageFeedback'
 import ImageGeneration from './components/ImageGeneration'
 import FinalResult from './components/FinalResult'
-import { workflowService, WorkflowStep, WorkflowState } from './service/WorkflowService'
+import { WorkflowStep } from './service/WorkflowService'
+import { WorkflowProvider, useWorkflow } from './context/WorkflowContext'
 
-const App: React.FC = () => {
-  const [state, setState] = useState<WorkflowState>(workflowService.getState())
-
-  useEffect(() => {
-    const updateState = () => {
-      setState(workflowService.getState())
-    }
-
-    // Set up an interval to check for state changes
-    const interval = setInterval(updateState, 100)
-    return () => clearInterval(interval)
-  }, [])
+const WorkflowContent: React.FC = () => {
+  const { state } = useWorkflow()
 
   const renderCurrentStep = () => {
     switch (state.currentStep) {
@@ -42,7 +33,20 @@ const App: React.FC = () => {
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
       {renderCurrentStep()}
+      {state.error && (
+        <div style={{ color: 'red', marginTop: '20px', textAlign: 'center' }}>
+          {state.error}
+        </div>
+      )}
     </div>
+  )
+}
+
+const App: React.FC = () => {
+  return (
+    <WorkflowProvider>
+      <WorkflowContent />
+    </WorkflowProvider>
   )
 }
 

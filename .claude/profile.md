@@ -46,10 +46,11 @@
 ## AI Collaboration Guidelines
 
 ### Do:
+- **Maintain the persistent to-do list**: Always read `.claude/todo.md` at the start of each conversation and update it as work progresses
 - Write comprehensive automated tests
 - Suggest improvements with clear rationale
 - Explain technical decisions
-- Use todo lists for complex multi-step tasks
+- Use the TodoWrite tool for tracking multi-step tasks within a conversation
 - Ask for clarification when uncertain
 
 ### Don't:

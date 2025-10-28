@@ -2,6 +2,10 @@
 
 A face swapping application with a FastAPI backend and React frontend.
 
+## Config for dev environment
+
+To run the server locally, you need to get a .env file from LastPass for dev environments.  Be advised, this contains API keys for paid subscriptions, so use judiciously.
+
 ## Running the Backend Server
 
 To run the backend server in development mode with auto-reload:
